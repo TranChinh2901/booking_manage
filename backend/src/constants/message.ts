@@ -10,6 +10,8 @@ export const SuccessMessages = {
   },
 
   AUTH: {
+    REGISTER_SUCCESS: "Register successfully",
+
     LOGIN_SUCCESS: "Login successfully",
 
     LOGOUT_SUCCESS: "Logout successfully",
@@ -19,6 +21,8 @@ export const SuccessMessages = {
 export const ErrorMessages = {
   USER_NOT_FOUND: "User not found",
 
+  USER_INACTIVE: "User is inactive",
+
   INVALID_ID: "Invalid id",
 
   EMAIL_EXISTS: "Email already exists",
@@ -26,6 +30,8 @@ export const ErrorMessages = {
   INVALID_CREDENTIALS: "Invalid email or password",
 
   UNAUTHORIZED: "You are not authorized",
+
+  FORBIDDEN: "You do not have permission",
 
   VALIDATION_FAILED: "Validation failed",
 

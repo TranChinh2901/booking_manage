@@ -1,4 +1,5 @@
 import { Repository } from "typeorm";
+import bcrypt from "bcryptjs";
 
 import { AppDataSource } from "@/config/config-database";
 import { User } from "@/modules/users/entities/user.entity";
@@ -45,9 +46,12 @@ export class UserService {
         ErrorCode.EMAIL_ALREADY_EXISTS
       );
     }
+    const hashedPassword = await bcrypt.hash(userDto.password, 10);
     const newUser: User = this.userRepository.create({
       name: userDto.name,
       email: userDto.email,
+      password: hashedPassword,
+      phone: userDto.phone,
     });
     await this.userRepository.save(newUser);
     return newUser;
