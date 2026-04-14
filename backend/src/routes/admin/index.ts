@@ -1,5 +1,6 @@
 import express from "express";
 
+import adminDashboardRouter from "@/routes/admin-dashboard";
 import { authGuard, roleGuard } from "@/middlewares/auth.middleware";
 import { validateBody } from "@/middlewares/validate.middleware";
 import bookingController from "@/modules/bookings/booking.controller";
@@ -31,6 +32,8 @@ const router = express.Router();
 const adminRoles = [UserRole.ADMIN, UserRole.STAFF];
 
 router.use(asyncHandle(authGuard), roleGuard(adminRoles));
+
+router.use("/dashboard", adminDashboardRouter);
 
 router.get("/destinations", asyncHandle(destinationController.getAll));
 router.post(

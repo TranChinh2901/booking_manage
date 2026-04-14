@@ -138,6 +138,10 @@ GET    /api/v1/admin/bookings
 GET    /api/v1/admin/bookings/:id
 PATCH  /api/v1/admin/bookings/:id/status
 PATCH  /api/v1/admin/bookings/:id/cancel
+
+GET    /api/v1/admin/dashboard/summary
+GET    /api/v1/admin/dashboard/revenue
+GET    /api/v1/admin/dashboard/top-tours
 ```
 
 ## Cấu trúc thư mục
