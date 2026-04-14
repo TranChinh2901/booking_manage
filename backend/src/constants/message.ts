@@ -39,6 +39,26 @@ export const SuccessMessages = {
     TOUR_GET: "Fetch tour data successfully",
   },
 
+  TOUR_SCHEDULE: {
+    TOUR_SCHEDULE_CREATED: "Tour schedule created successfully",
+
+    TOUR_SCHEDULE_UPDATED: "Tour schedule updated successfully",
+
+    TOUR_SCHEDULE_DELETED: "Tour schedule deleted successfully",
+
+    TOUR_SCHEDULE_GET: "Fetch tour schedule data successfully",
+  },
+
+  BOOKING: {
+    BOOKING_CREATED: "Booking created successfully",
+
+    BOOKING_UPDATED: "Booking updated successfully",
+
+    BOOKING_CANCELLED: "Booking cancelled successfully",
+
+    BOOKING_GET: "Fetch booking data successfully",
+  },
+
   AUTH: {
     REGISTER_SUCCESS: "Register successfully",
 
@@ -56,6 +76,14 @@ export const ErrorMessages = {
   CATEGORY_NOT_FOUND: "Category not found",
 
   TOUR_NOT_FOUND: "Tour not found",
+
+  TOUR_SCHEDULE_NOT_FOUND: "Tour schedule not found",
+
+  BOOKING_NOT_FOUND: "Booking not found",
+
+  NOT_ENOUGH_SEATS: "Not enough seats available",
+
+  TOUR_SCHEDULE_NOT_OPEN: "Tour schedule is not open",
 
   SLUG_EXISTS: "Slug already exists",
 

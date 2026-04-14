@@ -2,6 +2,8 @@ import express from "express";
 
 import { authGuard, roleGuard } from "@/middlewares/auth.middleware";
 import { validateBody } from "@/middlewares/validate.middleware";
+import bookingController from "@/modules/bookings/booking.controller";
+import { UpdateBookingStatusSchema } from "@/modules/bookings/schemas/booking.schema";
 import categoryController from "@/modules/categories/category.controller";
 import {
   CreateCategorySchema,
@@ -13,6 +15,11 @@ import {
   UpdateDestinationSchema,
 } from "@/modules/destinations/schemas/destination.schema";
 import tourController from "@/modules/tours/tour.controller";
+import tourScheduleController from "@/modules/tour-schedules/tour-schedule.controller";
+import {
+  CreateTourScheduleSchema,
+  UpdateTourScheduleSchema,
+} from "@/modules/tour-schedules/schemas/tour-schedule.schema";
 import {
   CreateTourSchema,
   UpdateTourSchema,
@@ -60,5 +67,27 @@ router.patch(
   asyncHandle(tourController.update)
 );
 router.delete("/tours/:id", asyncHandle(tourController.delete));
+
+router.get("/tour-schedules", asyncHandle(tourScheduleController.getAll));
+router.post(
+  "/tour-schedules",
+  validateBody(CreateTourScheduleSchema),
+  asyncHandle(tourScheduleController.create)
+);
+router.patch(
+  "/tour-schedules/:id",
+  validateBody(UpdateTourScheduleSchema),
+  asyncHandle(tourScheduleController.update)
+);
+router.delete("/tour-schedules/:id", asyncHandle(tourScheduleController.delete));
+
+router.get("/bookings", asyncHandle(bookingController.getAll));
+router.get("/bookings/:id", asyncHandle(bookingController.getById));
+router.patch(
+  "/bookings/:id/status",
+  validateBody(UpdateBookingStatusSchema),
+  asyncHandle(bookingController.updateStatus)
+);
+router.patch("/bookings/:id/cancel", asyncHandle(bookingController.cancel));
 
 export default router;
