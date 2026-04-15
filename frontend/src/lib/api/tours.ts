@@ -1,5 +1,11 @@
 import { apiFetch, toQueryString } from "./client";
-import type { PaginatedItems, Tour, TourListQuery, TourSchedule } from "./types";
+import type {
+  Destination,
+  PaginatedItems,
+  Tour,
+  TourListQuery,
+  TourSchedule,
+} from "./types";
 
 export async function getTours(query: TourListQuery = {}) {
   return apiFetch<PaginatedItems<Tour>>(
@@ -12,6 +18,12 @@ export async function getTours(query: TourListQuery = {}) {
     })}`,
     { cache: "no-store" }
   );
+}
+
+export async function getDestinations() {
+  return apiFetch<Destination[]>("/destinations", {
+    cache: "no-store",
+  });
 }
 
 export async function getTourBySlug(slug: string) {

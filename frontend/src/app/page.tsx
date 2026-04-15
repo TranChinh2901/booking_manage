@@ -1,5 +1,6 @@
 import { TravelLandingPage } from "@/components/travel-landing/travel-landing-page";
-import { getTours } from "@/lib/api/tours";
+import { getPosts } from "@/lib/api/posts";
+import { getDestinations, getTours } from "@/lib/api/tours";
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +13,35 @@ async function getFeaturedTours() {
   }
 }
 
-export default async function Home() {
-  const featuredTours = await getFeaturedTours();
+async function getHomeDestinations() {
+  try {
+    return await getDestinations();
+  } catch {
+    return [];
+  }
+}
 
-  return <TravelLandingPage featuredTours={featuredTours} />;
+async function getLatestPosts() {
+  try {
+    const result = await getPosts({ limit: 3 });
+    return result.items;
+  } catch {
+    return [];
+  }
+}
+
+export default async function Home() {
+  const [featuredTours, destinations, posts] = await Promise.all([
+    getFeaturedTours(),
+    getHomeDestinations(),
+    getLatestPosts(),
+  ]);
+
+  return (
+    <TravelLandingPage
+      destinations={destinations}
+      featuredTours={featuredTours}
+      posts={posts}
+    />
+  );
 }

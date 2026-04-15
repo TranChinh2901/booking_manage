@@ -74,6 +74,9 @@ export function Navbar() {
         <Link className="transition-colors hover:text-[#0c4a6e]" href="/tours">
           Tours
         </Link>
+        <Link className="transition-colors hover:text-[#0c4a6e]" href="/posts">
+          Guides
+        </Link>
         <Link className="transition-colors hover:text-[#0c4a6e]" href="/account/bookings">
           My Bookings
         </Link>
@@ -129,6 +132,12 @@ export function Navbar() {
                 href="/tours"
               >
                 Tours
+              </Link>
+              <Link
+                className="block rounded-[8px] px-3 py-2 text-sm font-bold text-[#496779] transition-colors hover:bg-[#f0f9ff] hover:text-[#0c4a6e]"
+                href="/posts"
+              >
+                Guides
               </Link>
               {user.role === "ADMIN" ? (
                 <Link

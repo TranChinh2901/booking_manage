@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   cancelBooking,
@@ -275,6 +275,84 @@ function UploadButton({
         type="file"
       />
     </label>
+  );
+}
+
+function RichTextEditor({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = value;
+    }
+  }, [value]);
+
+  function runCommand(command: string, commandValue?: string) {
+    document.execCommand(command, false, commandValue);
+    editorRef.current?.focus();
+    onChange(editorRef.current?.innerHTML || "");
+  }
+
+  function createLink() {
+    const url = window.prompt("Paste a URL");
+    if (url) {
+      runCommand("createLink", url);
+    }
+  }
+
+  const toolbar = [
+    ["Bold", "bold"],
+    ["Italic", "italic"],
+    ["Underline", "underline"],
+    ["Quote", "formatBlock", "blockquote"],
+    ["H2", "formatBlock", "h2"],
+    ["H3", "formatBlock", "h3"],
+    ["Bullets", "insertUnorderedList"],
+    ["Numbers", "insertOrderedList"],
+  ] as const;
+
+  return (
+    <div className="rounded-[8px] border border-[#d7edf4] bg-white">
+      <div className="flex flex-wrap gap-2 border-b border-[#e3f2f7] p-2">
+        {toolbar.map(([label, command, commandValue]) => (
+          <button
+            className="h-9 rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-3 text-xs font-black text-[#0e7490] hover:bg-[#f0f9ff]"
+            key={label}
+            onClick={() => runCommand(command, commandValue)}
+            type="button"
+          >
+            {label}
+          </button>
+        ))}
+        <button
+          className="h-9 rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-3 text-xs font-black text-[#0e7490] hover:bg-[#f0f9ff]"
+          onClick={createLink}
+          type="button"
+        >
+          Link
+        </button>
+        <button
+          className="h-9 rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-3 text-xs font-black text-[#0e7490] hover:bg-[#f0f9ff]"
+          onClick={() => runCommand("removeFormat")}
+          type="button"
+        >
+          Clear
+        </button>
+      </div>
+      <div
+        className="rich-content min-h-72 rounded-b-[8px] bg-[#f8fdff] px-4 py-3 outline-none focus:bg-white"
+        contentEditable
+        onInput={(event) => onChange(event.currentTarget.innerHTML)}
+        ref={editorRef}
+        suppressContentEditableWarning
+      />
+    </div>
   );
 }
 
@@ -1895,9 +1973,8 @@ function PostForm({
       </div>
       <div className="lg:col-span-2">
         <Field label="Content">
-          <Textarea
-            onChange={(event) => setForm({ ...form, content: event.target.value })}
-            required
+          <RichTextEditor
+            onChange={(content) => setForm({ ...form, content })}
             value={form.content}
           />
         </Field>
