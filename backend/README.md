@@ -49,6 +49,15 @@ cp .env.example .env
 
 Cập nhật thông tin kết nối DB, PORT, JWT,... trong file .env
 
+Nếu dùng upload ảnh Cloudinary, cấu hình thêm:
+
+```bash
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+CLOUDINARY_FOLDER=travel-booking
+```
+
 ## Chạy dự án
 
 1. Chạy migration để tạo bảng:
@@ -68,8 +77,7 @@ Tài khoản demo:
 | Role | Email | Password |
 |------|-------|----------|
 | Admin | admin@example.com | 123456 |
-| Staff | staff@example.com | 123456 |
-| Customer | customer@example.com | 123456 |
+| User | user@example.com | 123456 |
 
 4. Tạo bảng mới trong từ Entity dùng migration: (thay tên file, viết liền không dấu, không kí tự đặc biệt)
 npm run migration:generate -- src/migrations/tenFile
@@ -85,12 +93,22 @@ npm run migration:generate -- src/migrations/tenFile
 
 ## API chính
 
+Postman collection:
+
+```bash
+docs/postman-collection.json
+```
+
 ### Auth
 
 ```bash
 POST /api/v1/auth/register
 POST /api/v1/auth/login
+POST /api/v1/auth/refresh-token
+POST /api/v1/auth/logout
 GET  /api/v1/auth/profile
+PATCH /api/v1/auth/profile
+PATCH /api/v1/auth/change-password
 ```
 
 ### Public
@@ -101,17 +119,41 @@ GET /api/v1/categories
 GET /api/v1/tours
 GET /api/v1/tours/:slug
 GET /api/v1/tour-schedules
+GET /api/v1/reviews
+GET /api/v1/posts
+GET /api/v1/posts/:slug
+POST /api/v1/contact-requests
 ```
 
-### Customer
+### User
 
 ```bash
+POST  /api/v1/uploads/image
+POST  /api/v1/uploads/images
+
 GET   /api/v1/bookings/my
 POST  /api/v1/bookings
 PATCH /api/v1/bookings/:id/cancel
+
+GET    /api/v1/favorites
+POST   /api/v1/favorites/:tourId
+DELETE /api/v1/favorites/:tourId
+
+POST   /api/v1/reviews
+PATCH  /api/v1/reviews/:id
+DELETE /api/v1/reviews/:id
 ```
 
-### Admin/Staff
+Upload ảnh dùng `multipart/form-data`:
+
+| Endpoint | Field | Mô tả |
+|----------|-------|-------|
+| POST `/api/v1/uploads/image` | `image` | Upload 1 ảnh |
+| POST `/api/v1/uploads/images` | `images` | Upload nhiều ảnh, tối đa 10 ảnh |
+
+Có thể gửi thêm field `folder`, ví dụ `tours`, `posts`, `avatars`. Response trả về `secureUrl` để lưu vào `image`, `thumbnail`, `avatar` hoặc `tour.images[].url`.
+
+### Admin
 
 ```bash
 GET    /api/v1/admin/destinations
@@ -142,6 +184,25 @@ PATCH  /api/v1/admin/bookings/:id/cancel
 GET    /api/v1/admin/dashboard/summary
 GET    /api/v1/admin/dashboard/revenue
 GET    /api/v1/admin/dashboard/top-tours
+
+GET    /api/v1/admin/users
+GET    /api/v1/admin/users/:id
+PATCH  /api/v1/admin/users/:id
+DELETE /api/v1/admin/users/:id
+
+GET    /api/v1/admin/reviews
+PATCH  /api/v1/admin/reviews/:id
+DELETE /api/v1/admin/reviews/:id
+
+GET    /api/v1/admin/posts
+GET    /api/v1/admin/posts/:id
+POST   /api/v1/admin/posts
+PATCH  /api/v1/admin/posts/:id
+DELETE /api/v1/admin/posts/:id
+
+GET    /api/v1/admin/contact-requests
+GET    /api/v1/admin/contact-requests/:id
+PATCH  /api/v1/admin/contact-requests/:id
 ```
 
 ## Cấu trúc thư mục

@@ -2,13 +2,13 @@ import { Repository } from "typeorm";
 import bcrypt from "bcryptjs";
 
 import { AppDataSource } from "@/config/config-database";
-import { User } from "@/modules/users/entities/user.entity";
+import { User, UserStatus } from "@/modules/users/entities/user.entity";
 
 import { AppError } from "@/common/error.response";
 import { ErrorMessages } from "@/constants/message";
 import { HttpStatusCode } from "@/constants/status-code";
 import { ErrorCode } from "@/constants/error-code";
-import { CreateUserDto } from "./dto/user.dto";
+import { CreateUserDto, UpdateUserDto } from "./dto/user.dto";
 
 export class UserService {
   private userRepository: Repository<User>;
@@ -18,7 +18,9 @@ export class UserService {
   }
 
   async getAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({
+      order: { createdAt: "DESC" },
+    });
   }
 
   async getById(id: number): Promise<User> {
@@ -33,6 +35,18 @@ export class UserService {
       );
     }
     return userExists;
+  }
+
+  async update(id: number, userDto: UpdateUserDto): Promise<User> {
+    const user = await this.getById(id);
+    this.userRepository.merge(user, userDto);
+    return await this.userRepository.save(user);
+  }
+
+  async delete(id: number): Promise<void> {
+    const user = await this.getById(id);
+    user.status = UserStatus.INACTIVE;
+    await this.userRepository.save(user);
   }
 
   async create(userDto: CreateUserDto): Promise<User> {

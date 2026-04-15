@@ -59,12 +59,54 @@ export const SuccessMessages = {
     BOOKING_GET: "Fetch booking data successfully",
   },
 
+  REVIEW: {
+    REVIEW_CREATED: "Review created successfully",
+
+    REVIEW_UPDATED: "Review updated successfully",
+
+    REVIEW_DELETED: "Review deleted successfully",
+
+    REVIEW_GET: "Fetch review data successfully",
+  },
+
+  FAVORITE: {
+    FAVORITE_CREATED: "Favorite created successfully",
+
+    FAVORITE_DELETED: "Favorite deleted successfully",
+
+    FAVORITE_GET: "Fetch favorite data successfully",
+  },
+
+  POST: {
+    POST_CREATED: "Post created successfully",
+
+    POST_UPDATED: "Post updated successfully",
+
+    POST_DELETED: "Post deleted successfully",
+
+    POST_GET: "Fetch post data successfully",
+  },
+
+  CONTACT_REQUEST: {
+    CONTACT_REQUEST_CREATED: "Contact request created successfully",
+
+    CONTACT_REQUEST_UPDATED: "Contact request updated successfully",
+
+    CONTACT_REQUEST_GET: "Fetch contact request data successfully",
+  },
+
   AUTH: {
     REGISTER_SUCCESS: "Register successfully",
 
     LOGIN_SUCCESS: "Login successfully",
 
+    REFRESH_TOKEN_SUCCESS: "Refresh token successfully",
+
     LOGOUT_SUCCESS: "Logout successfully",
+
+    PROFILE_UPDATED: "Profile updated successfully",
+
+    PASSWORD_CHANGED: "Password changed successfully",
   },
 } as const;
 
@@ -80,6 +122,20 @@ export const ErrorMessages = {
   TOUR_SCHEDULE_NOT_FOUND: "Tour schedule not found",
 
   BOOKING_NOT_FOUND: "Booking not found",
+
+  REVIEW_NOT_FOUND: "Review not found",
+
+  FAVORITE_NOT_FOUND: "Favorite not found",
+
+  POST_NOT_FOUND: "Post not found",
+
+  CONTACT_REQUEST_NOT_FOUND: "Contact request not found",
+
+  REVIEW_EXISTS: "You already reviewed this tour",
+
+  REVIEW_NOT_ALLOWED: "You can only review completed tours",
+
+  FAVORITE_EXISTS: "Tour already exists in favorites",
 
   NOT_ENOUGH_SEATS: "Not enough seats available",
 
@@ -102,4 +158,10 @@ export const ErrorMessages = {
   VALIDATION_FAILED: "Validation failed",
 
   SERVER_ERROR: "Something went wrong",
+
+  FILE_REQUIRED: "Image file is required",
+
+  INVALID_IMAGE_FILE: "Only jpeg, png, webp and gif images are allowed",
+
+  CLOUDINARY_NOT_CONFIGURED: "Cloudinary is not configured",
 } as const;

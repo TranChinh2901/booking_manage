@@ -8,8 +8,7 @@ import {
 
 export enum UserRole {
   ADMIN = "ADMIN",
-  STAFF = "STAFF",
-  CUSTOMER = "CUSTOMER",
+  USER = "USER",
 }
 
 export enum UserStatus {
@@ -41,7 +40,7 @@ export class User {
   @Column({
     type: "enum",
     enum: UserRole,
-    default: UserRole.CUSTOMER,
+    default: UserRole.USER,
   })
   role!: UserRole;
 

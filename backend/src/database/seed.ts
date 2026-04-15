@@ -33,15 +33,9 @@ const users = [
     phone: "0900000001",
   },
   {
-    name: "Staff Demo",
-    email: "staff@example.com",
-    role: UserRole.STAFF,
-    phone: "0900000002",
-  },
-  {
-    name: "Customer Demo",
-    email: "customer@example.com",
-    role: UserRole.CUSTOMER,
+    name: "User Demo",
+    email: "user@example.com",
+    role: UserRole.USER,
     phone: "0900000003",
   },
 ];

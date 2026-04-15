@@ -4,12 +4,17 @@ import { CtaSection } from "./sections/cta-section";
 import { DestinationShowcase } from "./sections/destination-showcase";
 import { HeroSection } from "./sections/hero-section";
 import { TestimonialsSection } from "./sections/testimonials-section";
+import type { Tour } from "@/lib/api/types";
 
-export function TravelLandingPage() {
+type TravelLandingPageProps = {
+  featuredTours: Tour[];
+};
+
+export function TravelLandingPage({ featuredTours }: TravelLandingPageProps) {
   return (
     <PageShell>
       <HeroSection />
-      <DestinationShowcase />
+      <DestinationShowcase tours={featuredTours} />
       <BookingPreview />
       <TestimonialsSection />
       <CtaSection />

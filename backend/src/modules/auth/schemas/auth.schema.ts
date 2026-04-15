@@ -1,6 +1,12 @@
 import Joi from "joi";
 
-import { LoginDto, RegisterDto } from "@/modules/auth/dto/auth.dto";
+import {
+  ChangePasswordDto,
+  LoginDto,
+  RefreshTokenDto,
+  RegisterDto,
+  UpdateProfileDto,
+} from "@/modules/auth/dto/auth.dto";
 
 export const RegisterSchema = Joi.object<RegisterDto>({
   name: Joi.string().required().messages({
@@ -37,4 +43,19 @@ export const LoginSchema = Joi.object<LoginDto>({
     "string.empty": "Password is required",
     "any.required": "Password is required",
   }),
+});
+
+export const RefreshTokenSchema = Joi.object<RefreshTokenDto>({
+  refreshToken: Joi.string().required(),
+});
+
+export const UpdateProfileSchema = Joi.object<UpdateProfileDto>({
+  name: Joi.string().optional(),
+  phone: Joi.string().allow("").optional(),
+  avatar: Joi.string().allow("").optional(),
+});
+
+export const ChangePasswordSchema = Joi.object<ChangePasswordDto>({
+  currentPassword: Joi.string().required(),
+  newPassword: Joi.string().min(6).required(),
 });

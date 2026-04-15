@@ -15,7 +15,7 @@ export class AlterUsersForAuth1760000000000 implements MigrationInterface {
       "ALTER TABLE `users` ADD `avatar` varchar(255) NULL"
     );
     await queryRunner.query(
-      "ALTER TABLE `users` ADD `role` enum ('ADMIN', 'STAFF', 'CUSTOMER') NOT NULL DEFAULT 'CUSTOMER'"
+      "ALTER TABLE `users` ADD `role` enum ('ADMIN', 'USER') NOT NULL DEFAULT 'USER'"
     );
     await queryRunner.query(
       "ALTER TABLE `users` ADD `status` enum ('ACTIVE', 'INACTIVE', 'BANNED') NOT NULL DEFAULT 'ACTIVE'"

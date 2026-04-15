@@ -1,4 +1,5 @@
 import { UserResponseDto } from "@/modules/users/dto/user.dto";
+import { UserRole } from "@/modules/users/entities/user.entity";
 
 export interface RegisterDto {
   name: string;
@@ -10,6 +11,21 @@ export interface RegisterDto {
 export interface LoginDto {
   email: string;
   password: string;
+}
+
+export interface RefreshTokenDto {
+  refreshToken: string;
+}
+
+export interface UpdateProfileDto {
+  name?: string;
+  phone?: string;
+  avatar?: string;
+}
+
+export interface ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
 }
 
 export interface AuthTokensDto {
@@ -24,5 +40,5 @@ export interface AuthResponseDto extends AuthTokensDto {
 export interface JwtPayloadDto {
   sub: number;
   email: string;
-  role: string;
+  role: UserRole;
 }

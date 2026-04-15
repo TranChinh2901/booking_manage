@@ -19,3 +19,11 @@ export interface UserResponseDto {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface UpdateUserDto {
+  name?: string;
+  phone?: string;
+  avatar?: string;
+  role?: UserRole;
+  status?: UserStatus;
+}

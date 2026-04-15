@@ -6,7 +6,6 @@
     "dev": "nodemon --watch ./src --ext ts --exec ts-node -r tsconfig-paths/register src/main.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "ts-node -r tsconfig-paths/register src/database/seed.ts",
-
     "migration:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js         migration:generate -d src/config/config-database.ts",
     "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/config/config-database.ts",
     "migration:revert": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d src/config/config-database.ts"
@@ -16,12 +15,14 @@
   "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.9.0",
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.1.1",
     "mysql2": "^3.6.2",
     "nodemon": "^3.1.9",
     "reflect-metadata": "^0.1.13",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/multer": "^2.1.0",
     "@types/node": "^20.10.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",

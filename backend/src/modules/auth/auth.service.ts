@@ -13,9 +13,12 @@ import { toUserResponseDto } from "@/modules/users/user.mapper";
 import {
   AuthResponseDto,
   AuthTokensDto,
+  ChangePasswordDto,
   JwtPayloadDto,
   LoginDto,
+  RefreshTokenDto,
   RegisterDto,
+  UpdateProfileDto,
 } from "./dto/auth.dto";
 
 const jwt = require("jsonwebtoken") as {
@@ -24,6 +27,7 @@ const jwt = require("jsonwebtoken") as {
     secret: string,
     options?: { expiresIn?: string }
   ) => string;
+  verify: (token: string, secret: string) => string | JwtPayloadDto;
 };
 
 export class AuthService {
@@ -98,6 +102,94 @@ export class AuthService {
       user: toUserResponseDto(user),
       ...this.generateTokens(user),
     };
+  }
+
+  async refreshToken(dto: RefreshTokenDto): Promise<AuthTokensDto> {
+    try {
+      const decoded = jwt.verify(dto.refreshToken, loadedEnv.jwt.refreshSecret);
+
+      if (typeof decoded === "string") {
+        throw new Error("Invalid token payload");
+      }
+
+      const user = await this.userRepository.findOne({
+        where: { id: decoded.sub },
+      });
+
+      if (!user || user.status !== UserStatus.ACTIVE) {
+        throw new AppError(
+          ErrorMessages.UNAUTHORIZED,
+          HttpStatusCode.UNAUTHORIZED,
+          ErrorCode.UNAUTHORIZED
+        );
+      }
+
+      return this.generateTokens(user);
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      throw new AppError(
+        ErrorMessages.UNAUTHORIZED,
+        HttpStatusCode.UNAUTHORIZED,
+        ErrorCode.INVALID_TOKEN
+      );
+    }
+  }
+
+  async updateProfile(
+    userId: number,
+    dto: UpdateProfileDto
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new AppError(
+        ErrorMessages.USER_NOT_FOUND,
+        HttpStatusCode.NOT_FOUND,
+        ErrorCode.USER_NOT_FOUND
+      );
+    }
+
+    this.userRepository.merge(user, dto);
+
+    return await this.userRepository.save(user);
+  }
+
+  async changePassword(
+    userId: number,
+    dto: ChangePasswordDto
+  ): Promise<void> {
+    const user = await this.userRepository
+      .createQueryBuilder("user")
+      .addSelect("user.password")
+      .where("user.id = :id", { id: userId })
+      .getOne();
+
+    if (!user) {
+      throw new AppError(
+        ErrorMessages.USER_NOT_FOUND,
+        HttpStatusCode.NOT_FOUND,
+        ErrorCode.USER_NOT_FOUND
+      );
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      dto.currentPassword,
+      user.password
+    );
+
+    if (!isPasswordValid) {
+      throw new AppError(
+        ErrorMessages.INVALID_CREDENTIALS,
+        HttpStatusCode.UNAUTHORIZED,
+        ErrorCode.UNAUTHORIZED
+      );
+    }
+
+    user.password = await bcrypt.hash(dto.newPassword, 10);
+    await this.userRepository.save(user);
   }
 
   private generateTokens(user: User): AuthTokensDto {

@@ -2,14 +2,18 @@ import { ArrowIcon } from "../icons";
 
 export function BookingSearchForm() {
   return (
-    <form className="mt-8 grid gap-3 rounded-[8px] border border-white/80 bg-white/86 p-3 shadow-[0_24px_70px_rgba(12,74,110,0.16)] backdrop-blur-xl sm:grid-cols-[1fr_1fr_auto]">
+    <form
+      action="/tours"
+      className="mt-8 grid gap-3 rounded-[8px] border border-white/80 bg-white/86 p-3 shadow-[0_24px_70px_rgba(12,74,110,0.16)] backdrop-blur-xl sm:grid-cols-[1fr_1fr_auto]"
+      method="get"
+    >
       <label className="block">
         <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
           Destination
         </span>
         <input
           className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none transition-colors placeholder:text-[#7b98a8] focus:border-[#0ea5e9]"
-          name="destination"
+          name="keyword"
           placeholder="Where to?"
           type="text"
         />

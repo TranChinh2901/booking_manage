@@ -8,7 +8,7 @@ import { ErrorMessages, SuccessMessages } from "@/constants/message";
 import { AppError } from "@/common/error.response";
 import { ErrorCode } from "@/constants/error-code";
 
-import { CreateUserDto, UserResponseDto } from "./dto/user.dto";
+import { CreateUserDto, UpdateUserDto, UserResponseDto } from "./dto/user.dto";
 import { toUserResponseDto } from "./user.mapper";
 
 class UserController {
@@ -57,6 +57,43 @@ class UserController {
       message: SuccessMessages.USER.USER_CREATED,
       statusCode: HttpStatusCode.CREATED,
       data: userDto,
+    }).sendResponse(res);
+  }
+
+  async update(req: Request, res: Response) {
+    const id: number = parseInt(req.params.id);
+    if (isNaN(id)) {
+      throw new AppError(
+        ErrorMessages.INVALID_ID,
+        HttpStatusCode.BAD_REQUEST,
+        ErrorCode.INVALID_PARAMS
+      );
+    }
+
+    const user = await userService.update(id, req.body as UpdateUserDto);
+
+    return new AppResponse({
+      message: SuccessMessages.USER.USER_UPDATED,
+      statusCode: HttpStatusCode.OK,
+      data: toUserResponseDto(user),
+    }).sendResponse(res);
+  }
+
+  async delete(req: Request, res: Response) {
+    const id: number = parseInt(req.params.id);
+    if (isNaN(id)) {
+      throw new AppError(
+        ErrorMessages.INVALID_ID,
+        HttpStatusCode.BAD_REQUEST,
+        ErrorCode.INVALID_PARAMS
+      );
+    }
+
+    await userService.delete(id);
+
+    return new AppResponse({
+      message: SuccessMessages.USER.USER_DELETED,
+      statusCode: HttpStatusCode.OK,
     }).sendResponse(res);
   }
 }
