@@ -67,7 +67,7 @@ export const destinations = [
 
 export const bookingPreviewStats = [
   ["Dates", "May 18 - 26"],
-  ["Location", "Lisbon, Comporta, Madeira"],
+  ["Location", "18 Pham Nhu Tang, Da Nang"],
   ["Pace", "Slow coast and island air"],
 ] as const;
 

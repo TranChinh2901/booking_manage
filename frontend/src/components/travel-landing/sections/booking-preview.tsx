@@ -27,11 +27,11 @@ export function BookingPreview() {
                 Featured Trip
               </p>
               <h3 className="mt-2 text-3xl font-black text-[#062f42]">
-                Portugal color route
+                Da Nang color route
               </h3>
             </div>
             <p className="rounded-[8px] bg-[#ffedd5] px-4 py-3 text-lg font-black text-[#c2410c]">
-              $4,680
+              $2,901
             </p>
           </div>
 
