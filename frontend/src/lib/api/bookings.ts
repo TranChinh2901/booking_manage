@@ -22,3 +22,10 @@ export function cancelMyBooking(id: number, token: string) {
     token,
   });
 }
+
+export function deleteMyBooking(id: number, token: string) {
+  return apiFetch<null>(`/bookings/${id}`, {
+    method: "DELETE",
+    token,
+  });
+}

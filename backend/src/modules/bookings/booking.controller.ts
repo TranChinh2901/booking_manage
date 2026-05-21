@@ -70,6 +70,26 @@ class BookingController {
     }).sendResponse(res);
   }
 
+  async confirm(req: Request, res: Response) {
+    const booking = await bookingService.confirm(Number(req.params.id));
+
+    return new AppResponse({
+      message: "Đã xác nhận đơn đặt tour",
+      statusCode: HttpStatusCode.OK,
+      data: toBookingResponseDto(booking),
+    }).sendResponse(res);
+  }
+
+  async complete(req: Request, res: Response) {
+    const booking = await bookingService.complete(Number(req.params.id));
+
+    return new AppResponse({
+      message: "Đã hoàn thành đơn đặt tour",
+      statusCode: HttpStatusCode.OK,
+      data: toBookingResponseDto(booking),
+    }).sendResponse(res);
+  }
+
   async cancelMine(req: AuthenticatedRequest, res: Response) {
     const booking = await bookingService.cancel(
       Number(req.params.id),
@@ -90,6 +110,16 @@ class BookingController {
       message: SuccessMessages.BOOKING.BOOKING_CANCELLED,
       statusCode: HttpStatusCode.OK,
       data: toBookingResponseDto(booking),
+    }).sendResponse(res);
+  }
+
+  async deleteMine(req: AuthenticatedRequest, res: Response) {
+    await bookingService.deleteMine(Number(req.params.id), req.user!.id);
+
+    return new AppResponse({
+      message: "Booking deleted successfully",
+      statusCode: HttpStatusCode.OK,
+      data: null,
     }).sendResponse(res);
   }
 }

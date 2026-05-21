@@ -17,5 +17,6 @@ router.post(
   asyncHandle(bookingController.create)
 );
 router.patch("/:id/cancel", asyncHandle(bookingController.cancelMine));
+router.delete("/:id", asyncHandle(bookingController.deleteMine));
 
 export default router;

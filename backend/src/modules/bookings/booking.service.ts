@@ -13,7 +13,7 @@ import { User } from "@/modules/users/entities/user.entity";
 import { sendBookingConfirmationEmail, sendBookingCancelledEmail } from "@/utils/mail.service";
 
 import { CreateBookingDto, UpdateBookingStatusDto } from "./dto/booking.dto";
-import { Booking, BookingStatus } from "./entities/booking.entity";
+import { Booking, BookingStatus, PaymentStatus } from "./entities/booking.entity";
 
 export class BookingService {
   private bookingRepository: Repository<Booking>;
@@ -173,17 +173,86 @@ export class BookingService {
   ): Promise<Booking> {
     const booking = await this.getById(id);
 
+    // Validate state transitions
     if (dto.status) {
+      this.validateStatusTransition(booking.status, dto.status);
       booking.status = dto.status;
     }
 
     if (dto.paymentStatus) {
+      this.validatePaymentTransition(booking.paymentStatus, dto.paymentStatus);
       booking.paymentStatus = dto.paymentStatus;
     }
 
     await this.bookingRepository.save(booking);
 
     return await this.getById(id);
+  }
+
+  async confirm(id: number): Promise<Booking> {
+    const booking = await this.getById(id);
+
+    if (booking.status !== BookingStatus.PENDING) {
+      throw new AppError(
+        "Chỉ có thể xác nhận đơn đang ở trạng thái chờ xử lý",
+        HttpStatusCode.BAD_REQUEST,
+        ErrorCode.VALIDATION_ERROR
+      );
+    }
+
+    booking.status = BookingStatus.CONFIRMED;
+    await this.bookingRepository.save(booking);
+    return await this.getById(id);
+  }
+
+  async complete(id: number): Promise<Booking> {
+    const booking = await this.getById(id);
+
+    if (booking.status !== BookingStatus.CONFIRMED) {
+      throw new AppError(
+        "Chỉ có thể hoàn thành đơn đã được xác nhận",
+        HttpStatusCode.BAD_REQUEST,
+        ErrorCode.VALIDATION_ERROR
+      );
+    }
+
+    booking.status = BookingStatus.COMPLETED;
+    await this.bookingRepository.save(booking);
+    return await this.getById(id);
+  }
+
+  private validateStatusTransition(current: BookingStatus, next: BookingStatus) {
+    const allowed: Record<BookingStatus, BookingStatus[]> = {
+      [BookingStatus.PENDING]: [BookingStatus.CONFIRMED, BookingStatus.CANCELLED],
+      [BookingStatus.CONFIRMED]: [BookingStatus.COMPLETED, BookingStatus.CANCELLED],
+      [BookingStatus.COMPLETED]: [],
+      [BookingStatus.CANCELLED]: [],
+    };
+
+    if (!allowed[current].includes(next)) {
+      throw new AppError(
+        `Không thể chuyển trạng thái từ ${current} sang ${next}`,
+        HttpStatusCode.BAD_REQUEST,
+        ErrorCode.VALIDATION_ERROR
+      );
+    }
+  }
+
+  private validatePaymentTransition(current: PaymentStatus, next: PaymentStatus) {
+    const allowed: Record<PaymentStatus, PaymentStatus[]> = {
+      [PaymentStatus.UNPAID]: [PaymentStatus.PAID],
+      [PaymentStatus.PAID]: [PaymentStatus.REFUNDED],
+      [PaymentStatus.FAILED]: [PaymentStatus.PAID],
+      [PaymentStatus.REFUNDED]: [],
+    };
+
+    if (!allowed[current].includes(next)) {
+      throw new AppError(
+        `Không thể chuyển thanh toán từ ${current} sang ${next}`,
+        HttpStatusCode.BAD_REQUEST,
+        ErrorCode.VALIDATION_ERROR
+      );
+    }
   }
 
   async cancel(id: number, userId?: number): Promise<Booking> {
@@ -230,6 +299,20 @@ export class BookingService {
     });
 
     return await this.getById(id);
+  }
+
+  async deleteMine(id: number, userId: number): Promise<void> {
+    const booking = await this.getById(id);
+
+    if (booking.userId !== userId) {
+      throw new AppError(
+        ErrorMessages.FORBIDDEN,
+        HttpStatusCode.FORBIDDEN,
+        ErrorCode.FORBIDDEN
+      );
+    }
+
+    await this.bookingRepository.remove(booking);
   }
 
   private generateBookingCode(): string {

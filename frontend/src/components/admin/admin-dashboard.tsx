@@ -1812,17 +1812,51 @@ function BookingsSection({
 }) {
   return (
     <Panel title="Bookings" description="View all bookings, update processing and payment status, or cancel bookings.">
-      <Table headers={["Code", "Customer", "Tour", "Total", "Status", "Actions"]}>
-        {bookings.map((booking) => (
-          <BookingRow
-            booking={booking}
-            key={booking.id}
-            onCancel={onCancel}
-            onUpdate={onUpdate}
-          />
-        ))}
-      </Table>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[900px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-[#e3f2f7] text-xs font-black uppercase tracking-wider text-[#64748b]">
+              <th className="px-3 py-3">Mã đơn</th>
+              <th className="px-3 py-3">Khách hàng</th>
+              <th className="px-3 py-3">Tour</th>
+              <th className="px-3 py-3 text-right">Tổng tiền</th>
+              <th className="px-3 py-3 text-center">Trạng thái</th>
+              <th className="px-3 py-3 text-center">Thanh toán</th>
+              <th className="px-3 py-3">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[#f0f9ff]">
+            {bookings.map((booking) => (
+              <BookingRow
+                booking={booking}
+                key={booking.id}
+                onCancel={onCancel}
+                onUpdate={onUpdate}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Panel>
+  );
+}
+
+function StatusBadge({ value }: { value: string }) {
+  const colors: Record<string, string> = {
+    PENDING: "bg-amber-50 text-amber-700 border-amber-200",
+    CONFIRMED: "bg-blue-50 text-blue-700 border-blue-200",
+    COMPLETED: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    CANCELLED: "bg-red-50 text-red-600 border-red-200",
+    UNPAID: "bg-slate-50 text-slate-600 border-slate-200",
+    PAID: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    FAILED: "bg-red-50 text-red-600 border-red-200",
+    REFUNDED: "bg-violet-50 text-violet-700 border-violet-200",
+  };
+
+  return (
+    <span className={`inline-block whitespace-nowrap rounded border px-2 py-0.5 text-[11px] font-bold ${colors[value] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
+      {value}
+    </span>
   );
 }
 
@@ -1835,43 +1869,78 @@ function BookingRow({
   onUpdate: (id: number, payload: { status?: string; paymentStatus?: string }) => void;
   onCancel: (id: number) => void;
 }) {
-  const [status, setStatus] = useState(booking.status);
-  const [paymentStatus, setPaymentStatus] = useState(booking.paymentStatus);
+  const isCancelled = booking.status === "CANCELLED";
+  const isCompleted = booking.status === "COMPLETED";
+  const isPending = booking.status === "PENDING";
+  const isConfirmed = booking.status === "CONFIRMED";
 
   return (
-    <tr>
-      <td className="px-4 py-3 text-[#062f42]">{booking.bookingCode}</td>
-      <td className="px-4 py-3">
-        {booking.user?.name || booking.contactName}
-        <p className="text-xs text-[#64748b]">{booking.contactEmail}</p>
+    <tr className={isCancelled ? "opacity-40" : "hover:bg-[#f8fdff]"}>
+      <td className="px-3 py-3">
+        <span className="font-mono text-xs font-bold text-[#062f42]">{booking.bookingCode.slice(-8)}</span>
       </td>
-      <td className="px-4 py-3">{booking.tourSchedule?.tour?.title || booking.tourScheduleId}</td>
-      <td className="px-4 py-3">{formatCurrency(Number(booking.totalAmount))}</td>
-      <td className="min-w-48 space-y-2 px-4 py-3">
-        <Select onChange={(event) => setStatus(event.target.value)} value={status}>
-          {statusOptions.booking.map((item) => (
-            <option key={item}>{item}</option>
-          ))}
-        </Select>
-        <Select
-          onChange={(event) => setPaymentStatus(event.target.value)}
-          value={paymentStatus}
-        >
-          {statusOptions.payment.map((item) => (
-            <option key={item}>{item}</option>
-          ))}
-        </Select>
+      <td className="px-3 py-3">
+        <p className="text-sm font-semibold text-[#062f42]">{booking.user?.name || booking.contactName}</p>
+        <p className="text-[11px] text-[#94a3b8]">{booking.contactPhone}</p>
       </td>
-      <td className="space-y-2 px-4 py-3">
-        <Button
-          onClick={() => onUpdate(booking.id, { status, paymentStatus })}
-          type="button"
-        >
-          Save
-        </Button>
-        <Button onClick={() => onCancel(booking.id)} tone="danger" type="button">
-          Cancel booking
-        </Button>
+      <td className="max-w-[180px] truncate px-3 py-3 text-sm text-[#496779]">
+        {booking.tourSchedule?.tour?.title || "—"}
+        <p className="text-[11px] text-[#94a3b8]">{booking.adultCount} người lớn{booking.childCount > 0 ? `, ${booking.childCount} trẻ em` : ""}</p>
+      </td>
+      <td className="px-3 py-3 text-right text-sm font-bold text-[#f97316]">
+        {formatCurrency(Number(booking.totalAmount))}
+      </td>
+      <td className="px-3 py-3 text-center">
+        <StatusBadge value={booking.status} />
+      </td>
+      <td className="px-3 py-3 text-center">
+        <StatusBadge value={booking.paymentStatus} />
+      </td>
+      <td className="px-3 py-3">
+        {(isCancelled || isCompleted) ? (
+          <span className="text-xs text-[#94a3b8]">—</span>
+        ) : (
+          <div className="flex items-center gap-1">
+            {isPending && (
+              <button
+                className="rounded bg-blue-500 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-blue-600"
+                onClick={() => onUpdate(booking.id, { status: "CONFIRMED" })}
+                title="Xác nhận đơn"
+                type="button"
+              >
+                Xác nhận
+              </button>
+            )}
+            {isConfirmed && (
+              <button
+                className="rounded bg-emerald-500 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-emerald-600"
+                onClick={() => onUpdate(booking.id, { status: "COMPLETED" })}
+                title="Hoàn thành"
+                type="button"
+              >
+                Hoàn thành
+              </button>
+            )}
+            {booking.paymentStatus === "UNPAID" && (
+              <button
+                className="rounded border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 hover:bg-emerald-100"
+                onClick={() => onUpdate(booking.id, { paymentStatus: "PAID" })}
+                title="Xác nhận đã thanh toán"
+                type="button"
+              >
+                Đã TT
+              </button>
+            )}
+            <button
+              className="rounded border border-red-200 bg-red-50 px-2.5 py-1 text-[11px] font-bold text-red-600 hover:bg-red-100"
+              onClick={() => onCancel(booking.id)}
+              title="Hủy đơn"
+              type="button"
+            >
+              Hủy
+            </button>
+          </div>
+        )}
       </td>
     </tr>
   );

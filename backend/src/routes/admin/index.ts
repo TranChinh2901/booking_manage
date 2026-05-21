@@ -111,6 +111,8 @@ router.patch(
   validateBody(UpdateBookingStatusSchema),
   asyncHandle(bookingController.updateStatus)
 );
+router.patch("/bookings/:id/confirm", asyncHandle(bookingController.confirm));
+router.patch("/bookings/:id/complete", asyncHandle(bookingController.complete));
 router.patch("/bookings/:id/cancel", asyncHandle(bookingController.cancel));
 
 router.get("/reviews", asyncHandle(reviewController.getAll));

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { cancelMyBooking, getMyBookings } from "@/lib/api/bookings";
+import { cancelMyBooking, deleteMyBooking, getMyBookings } from "@/lib/api/bookings";
 import type { Booking } from "@/lib/api/types";
 import { clearAuth, getStoredAuth } from "@/lib/auth-storage";
 import { formatCurrency, formatDate } from "@/lib/format";
@@ -51,6 +51,19 @@ export function MyBookings() {
       );
     } catch {
       setError("Unable to cancel this booking.");
+    }
+  }
+
+  async function handleDelete(id: number) {
+    if (!token || !confirm("Bạn có chắc muốn xóa booking này?")) {
+      return;
+    }
+
+    try {
+      await deleteMyBooking(id, token);
+      setBookings((current) => current.filter((booking) => booking.id !== id));
+    } catch {
+      setError("Unable to delete this booking.");
     }
   }
 
@@ -152,6 +165,13 @@ export function MyBookings() {
                         Cancel booking
                       </button>
                     ) : null}
+                    <button
+                      className="mt-3 inline-flex h-11 w-full cursor-pointer items-center justify-center rounded-[8px] border border-[#ef4444] px-5 text-sm font-black text-[#ef4444]"
+                      onClick={() => void handleDelete(booking.id)}
+                      type="button"
+                    >
+                      Xóa
+                    </button>
                   </div>
                 </div>
               </article>

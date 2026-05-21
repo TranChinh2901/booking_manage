@@ -156,8 +156,9 @@ export function getTopTours(limit: number, { token }: AdminToken) {
   );
 }
 
-export function getAdminUsers({ token }: AdminToken) {
-  return apiFetch<User[]>("/admin/users", { token, cache: "no-store" });
+export async function getAdminUsers({ token }: AdminToken) {
+  const result = await apiFetch<{ items: User[]; meta: any } | User[]>("/admin/users?limit=100", { token, cache: "no-store" });
+  return Array.isArray(result) ? result : result.items;
 }
 
 export function updateAdminUser(id: number, payload: UserUpdatePayload, token: string) {
@@ -274,8 +275,9 @@ export function deleteTourSchedule(id: number, token: string) {
   return apiFetch<void>(`/admin/tour-schedules/${id}`, { method: "DELETE", token });
 }
 
-export function getAdminBookings({ token }: AdminToken) {
-  return apiFetch<Booking[]>("/admin/bookings", { token, cache: "no-store" });
+export async function getAdminBookings({ token }: AdminToken) {
+  const result = await apiFetch<{ items: Booking[]; meta: any } | Booking[]>("/admin/bookings?limit=100", { token, cache: "no-store" });
+  return Array.isArray(result) ? result : result.items;
 }
 
 export function updateBookingStatus(id: number, payload: BookingStatusPayload, token: string) {
