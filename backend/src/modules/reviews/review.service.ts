@@ -24,6 +24,9 @@ export class ReviewService {
   }
 
   async getAll(tourId?: number, visibleOnly = false): Promise<Review[]> {
+    const page = 1;
+    const limit = 50;
+
     return await this.reviewRepository.find({
       where: {
         ...(tourId ? { tourId } : {}),
@@ -31,6 +34,8 @@ export class ReviewService {
       },
       relations: ["user", "tour", "tour.destination", "tour.category", "tour.images"],
       order: { createdAt: "DESC" },
+      skip: 0,
+      take: limit,
     });
   }
 

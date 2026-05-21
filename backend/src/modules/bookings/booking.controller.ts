@@ -11,12 +11,16 @@ import { CreateBookingDto, UpdateBookingStatusDto } from "./dto/booking.dto";
 
 class BookingController {
   async getAll(req: Request, res: Response) {
-    const bookings = await bookingService.getAll();
+    const result = await bookingService.getAll({
+      page: req.query.page ? Number(req.query.page) : undefined,
+      limit: req.query.limit ? Number(req.query.limit) : undefined,
+      status: req.query.status as string | undefined,
+    });
 
     return new AppResponse({
       message: SuccessMessages.BOOKING.BOOKING_GET,
       statusCode: HttpStatusCode.OK,
-      data: bookings.map(toBookingResponseDto),
+      data: { items: result.items.map(toBookingResponseDto), meta: result.meta },
     }).sendResponse(res);
   }
 

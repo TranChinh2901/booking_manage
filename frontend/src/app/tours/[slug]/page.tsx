@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 
 import { PageShell } from "@/components/layout/page-shell";
 import { Navbar } from "@/components/travel-landing/ui/navbar";
-import { getTourBySlug, getTourSchedules } from "@/lib/api/tours";
-import type { Tour } from "@/lib/api/types";
+import { getTourBySlug, getTourReviews, getTourSchedules } from "@/lib/api/tours";
+import type { Review, Tour } from "@/lib/api/types";
 import { formatDate } from "@/lib/format";
 import {
   getTourDuration,
@@ -38,6 +38,14 @@ async function loadSchedules(tour: Tour) {
   }
 }
 
+async function loadReviews(tourId: number) {
+  try {
+    return await getTourReviews(tourId);
+  } catch {
+    return [];
+  }
+}
+
 export default async function TourDetailPage({ params }: TourDetailPageProps) {
   const { slug } = await params;
   const tour = await loadTour(slug);
@@ -47,6 +55,10 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
   }
 
   const schedules = await loadSchedules(tour);
+  const reviews = await loadReviews(tour.id);
+  const avgRating = reviews.length > 0
+    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+    : null;
 
   return (
     <PageShell>
@@ -150,6 +162,58 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
               )}
             </div>
           </aside>
+        </div>
+
+        {/* Reviews section */}
+        <div className="mx-auto mt-12 max-w-[1200px]">
+          <div className="rounded-[8px] border border-[#dff3fa] bg-white p-6 shadow-[0_20px_55px_rgba(12,74,110,0.08)]">
+            <div className="flex items-center gap-4">
+              <h2 className="text-3xl font-black text-[#062f42]">Đánh giá</h2>
+              {avgRating && (
+                <span className="rounded-full bg-[#f97316] px-3 py-1 text-sm font-black text-white">
+                  ★ {avgRating} ({reviews.length} đánh giá)
+                </span>
+              )}
+            </div>
+            <div className="mt-6 space-y-4">
+              {reviews.length === 0 ? (
+                <p className="text-base font-semibold text-[#496779]">
+                  Chưa có đánh giá nào cho tour này.
+                </p>
+              ) : (
+                reviews.map((review) => (
+                  <div
+                    className="rounded-[8px] border border-[#e3f2f7] bg-[#f8fdff] p-4"
+                    key={review.id}
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="font-black text-[#062f42]">
+                        {review.user?.name || "Khách hàng"}
+                      </p>
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <span
+                            className={i < review.rating ? "text-[#f97316]" : "text-[#d1d5db]"}
+                            key={i}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    {review.comment && (
+                      <p className="mt-2 text-sm font-semibold text-[#496779]">
+                        {review.comment}
+                      </p>
+                    )}
+                    <p className="mt-2 text-xs text-[#94a3b8]">
+                      {formatDate(review.createdAt)}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       </section>
     </PageShell>

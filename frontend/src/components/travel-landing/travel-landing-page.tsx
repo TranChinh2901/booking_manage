@@ -1,4 +1,5 @@
 import { PageShell } from "@/components/layout/page-shell";
+import { Footer } from "@/components/layout/footer";
 import { BookingPreview } from "./sections/booking-preview";
 import { CtaSection } from "./sections/cta-section";
 import { DestinationShowcase } from "./sections/destination-showcase";
@@ -26,6 +27,7 @@ export function TravelLandingPage({
       <BookingPreview />
       <TestimonialsSection />
       <CtaSection />
+      <Footer />
     </PageShell>
   );
 }

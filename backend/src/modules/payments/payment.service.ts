@@ -1,126 +1,119 @@
-import crypto from "crypto";
+import { Repository } from "typeorm";
 
-import { loadedEnv } from "@/config/load-env";
-import { AppDataSource } from "@/config/config-database";
 import { AppError } from "@/common/error.response";
+import { AppDataSource } from "@/config/config-database";
+import { ErrorCode } from "@/constants/error-code";
+import { ErrorMessages } from "@/constants/message";
 import { HttpStatusCode } from "@/constants/status-code";
 import { Booking, PaymentStatus } from "@/modules/bookings/entities/booking.entity";
 
-const { partnerCode, accessKey, secretKey, endpoint, returnUrl, notifyUrl } = loadedEnv.momo;
+import { ConfirmPaymentDto, CreatePaymentDto } from "./dto/payment.dto";
+import { Payment, PaymentMethod, PaymentTransactionStatus } from "./entities/payment.entity";
 
-export interface MoMoPaymentResult {
-  payUrl: string;
-  orderId: string;
-}
+export class PaymentService {
+  private paymentRepository: Repository<Payment>;
+  private bookingRepository: Repository<Booking>;
 
-export interface MoMoCallbackBody {
-  partnerCode: string;
-  orderId: string;
-  requestId: string;
-  amount: number;
-  orderInfo: string;
-  orderType: string;
-  transId: number;
-  resultCode: number;
-  message: string;
-  payType: string;
-  responseTime: number;
-  extraData: string;
-  signature: string;
-}
+  constructor() {
+    this.paymentRepository = AppDataSource.getRepository(Payment);
+    this.bookingRepository = AppDataSource.getRepository(Booking);
+  }
 
-class PaymentService {
-  async createMoMoPayment(bookingId: number): Promise<MoMoPaymentResult> {
-    const booking = await AppDataSource.getRepository(Booking).findOne({
-      where: { id: bookingId },
+  async getAll(bookingId?: number): Promise<Payment[]> {
+    return await this.paymentRepository.find({
+      where: bookingId ? { bookingId } : {},
+      relations: ["booking"],
+      order: { createdAt: "DESC" },
+    });
+  }
+
+  async getById(id: number): Promise<Payment> {
+    const payment = await this.paymentRepository.findOne({
+      where: { id },
+      relations: ["booking"],
     });
 
-    if (!booking) {
-      throw new AppError("Booking not found", HttpStatusCode.NOT_FOUND, "BOOKING_NOT_FOUND");
-    }
-
-    const orderId = `${booking.bookingCode}_${Date.now()}`;
-    const requestId = orderId;
-    const amount = Math.round(Number(booking.totalAmount));
-    const orderInfo = `Thanh toan tour - ${booking.bookingCode}`;
-    const requestType = "payWithMethod";
-    const extraData = "";
-    const autoCapture = true;
-    const lang = "vi";
-
-    const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${notifyUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${returnUrl}&requestId=${requestId}&requestType=${requestType}`;
-
-    const signature = crypto
-      .createHmac("sha256", secretKey)
-      .update(rawSignature)
-      .digest("hex");
-
-    const body = {
-      partnerCode,
-      partnerName: "Tour Booking",
-      storeId: "TourStore",
-      requestId,
-      amount,
-      orderId,
-      orderInfo,
-      redirectUrl: returnUrl,
-      ipnUrl: notifyUrl,
-      lang,
-      requestType,
-      autoCapture,
-      extraData,
-      signature,
-    };
-
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    const data = await response.json();
-
-    if (data.resultCode !== 0) {
+    if (!payment) {
       throw new AppError(
-        data.message || "MoMo payment creation failed",
-        HttpStatusCode.BAD_REQUEST,
-        "MOMO_PAYMENT_FAILED"
+        "Payment not found",
+        HttpStatusCode.NOT_FOUND,
+        ErrorCode.BOOKING_NOT_FOUND
       );
     }
 
-    return { payUrl: data.payUrl, orderId };
+    return payment;
   }
 
-  async handleMoMoCallback(body: MoMoCallbackBody): Promise<void> {
-    // Verify signature
-    const rawSignature = `accessKey=${accessKey}&amount=${body.amount}&extraData=${body.extraData}&message=${body.message}&orderId=${body.orderId}&orderInfo=${body.orderInfo}&orderType=${body.orderType}&partnerCode=${body.partnerCode}&payType=${body.payType}&requestId=${body.requestId}&responseTime=${body.responseTime}&resultCode=${body.resultCode}&transId=${body.transId}`;
-
-    const signature = crypto
-      .createHmac("sha256", secretKey)
-      .update(rawSignature)
-      .digest("hex");
-
-    if (signature !== body.signature) {
-      throw new AppError("Invalid signature", HttpStatusCode.BAD_REQUEST, "INVALID_SIGNATURE");
-    }
-
-    // Extract bookingCode from orderId (format: BK123456789_timestamp)
-    const bookingCode = body.orderId.split("_").slice(0, -1).join("_");
-
-    const bookingRepo = AppDataSource.getRepository(Booking);
-    const booking = await bookingRepo.findOne({ where: { bookingCode } });
+  async create(dto: CreatePaymentDto): Promise<Payment> {
+    const booking = await this.bookingRepository.findOne({
+      where: { id: dto.bookingId },
+    });
 
     if (!booking) {
-      return;
+      throw new AppError(
+        ErrorMessages.BOOKING_NOT_FOUND,
+        HttpStatusCode.NOT_FOUND,
+        ErrorCode.BOOKING_NOT_FOUND
+      );
     }
 
-    if (body.resultCode === 0) {
-      booking.paymentStatus = PaymentStatus.PAID;
-    } else {
-      booking.paymentStatus = PaymentStatus.FAILED;
+    const payment = this.paymentRepository.create({
+      paymentCode: `PAY${Date.now()}${Math.floor(Math.random() * 1000)}`,
+      bookingId: dto.bookingId,
+      method: dto.method as PaymentMethod,
+      amount: String(dto.amount),
+      transactionRef: dto.transactionRef,
+      note: dto.note,
+    });
+
+    return await this.paymentRepository.save(payment);
+  }
+
+  async confirm(id: number, dto: ConfirmPaymentDto): Promise<Payment> {
+    const payment = await this.getById(id);
+
+    if (payment.status !== PaymentTransactionStatus.PENDING) {
+      throw new AppError(
+        "Payment already processed",
+        HttpStatusCode.BAD_REQUEST,
+        ErrorCode.VALIDATION_ERROR
+      );
     }
 
-    await bookingRepo.save(booking);
+    payment.status = PaymentTransactionStatus.SUCCESS;
+    payment.paidAt = new Date();
+    if (dto.transactionRef) payment.transactionRef = dto.transactionRef;
+    if (dto.note) payment.note = dto.note;
+
+    await this.paymentRepository.save(payment);
+
+    // Update booking payment status
+    await this.bookingRepository.update(payment.bookingId, {
+      paymentStatus: PaymentStatus.PAID,
+    });
+
+    return await this.getById(id);
+  }
+
+  async refund(id: number): Promise<Payment> {
+    const payment = await this.getById(id);
+
+    if (payment.status !== PaymentTransactionStatus.SUCCESS) {
+      throw new AppError(
+        "Only successful payments can be refunded",
+        HttpStatusCode.BAD_REQUEST,
+        ErrorCode.VALIDATION_ERROR
+      );
+    }
+
+    payment.status = PaymentTransactionStatus.REFUNDED;
+    await this.paymentRepository.save(payment);
+
+    await this.bookingRepository.update(payment.bookingId, {
+      paymentStatus: PaymentStatus.REFUNDED,
+    });
+
+    return await this.getById(id);
   }
 }
 

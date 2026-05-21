@@ -31,4 +31,11 @@ export const loadedEnv = {
     returnUrl: process.env.MOMO_RETURN_URL || "http://localhost:3001/payment/result",
     notifyUrl: process.env.MOMO_NOTIFY_URL || "http://localhost:4000/api/v1/payments/momo/callback",
   },
+  mail: {
+    host: process.env.MAIL_HOST || "smtp.gmail.com",
+    port: Number(process.env.MAIL_PORT) || 587,
+    user: process.env.MAIL_USER || "",
+    pass: process.env.MAIL_PASS || "",
+    from: process.env.MAIL_FROM || "Travel Booking <noreply@travelbooking.com>",
+  },
 };

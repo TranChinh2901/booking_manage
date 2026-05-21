@@ -17,11 +17,21 @@ export class UserService {
     this.userRepository = AppDataSource.getRepository(User);
   }
 
-  async getAll(includeInactive = false): Promise<User[]> {
-    return await this.userRepository.find({
+  async getAll(query: { page?: number; limit?: number } = {}, includeInactive = false) {
+    const page = query.page && query.page > 0 ? query.page : 1;
+    const limit = query.limit && query.limit > 0 ? Math.min(query.limit, 100) : 20;
+
+    const [items, total] = await this.userRepository.findAndCount({
       where: includeInactive ? {} : { status: Not(UserStatus.INACTIVE) },
       order: { createdAt: "DESC" },
+      skip: (page - 1) * limit,
+      take: limit,
     });
+
+    return {
+      items,
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async getById(id: number): Promise<User> {

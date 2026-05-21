@@ -10,6 +10,7 @@ import {
   TourScheduleStatus,
 } from "@/modules/tour-schedules/entities/tour-schedule.entity";
 import { User } from "@/modules/users/entities/user.entity";
+import { sendBookingConfirmationEmail, sendBookingCancelledEmail } from "@/utils/mail.service";
 
 import { CreateBookingDto, UpdateBookingStatusDto } from "./dto/booking.dto";
 import { Booking, BookingStatus } from "./entities/booking.entity";
@@ -21,18 +22,32 @@ export class BookingService {
     this.bookingRepository = AppDataSource.getRepository(Booking);
   }
 
-  async getAll(): Promise<Booking[]> {
-    return await this.bookingRepository.find({
-      relations: [
-        "user",
-        "tourSchedule",
-        "tourSchedule.tour",
-        "tourSchedule.tour.destination",
-        "tourSchedule.tour.category",
-        "tourSchedule.tour.images",
-      ],
-      order: { createdAt: "DESC" },
-    });
+  async getAll(query: { page?: number; limit?: number; status?: string } = {}) {
+    const page = query.page && query.page > 0 ? query.page : 1;
+    const limit = query.limit && query.limit > 0 ? Math.min(query.limit, 100) : 20;
+
+    const qb = this.bookingRepository
+      .createQueryBuilder("booking")
+      .leftJoinAndSelect("booking.user", "user")
+      .leftJoinAndSelect("booking.tourSchedule", "tourSchedule")
+      .leftJoinAndSelect("tourSchedule.tour", "tour")
+      .leftJoinAndSelect("tour.destination", "destination")
+      .leftJoinAndSelect("tour.category", "category")
+      .leftJoinAndSelect("tour.images", "images")
+      .orderBy("booking.createdAt", "DESC")
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    if (query.status) {
+      qb.andWhere("booking.status = :status", { status: query.status });
+    }
+
+    const [items, total] = await qb.getManyAndCount();
+
+    return {
+      items,
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
   async getMine(userId: number): Promise<Booking[]> {
@@ -134,7 +149,22 @@ export class BookingService {
       return savedBooking.id;
     });
 
-    return await this.getById(bookingId);
+    const fullBooking = await this.getById(bookingId);
+
+    // Send confirmation email asynchronously
+    sendBookingConfirmationEmail({
+      contactName: fullBooking.contactName,
+      contactEmail: fullBooking.contactEmail,
+      bookingCode: fullBooking.bookingCode,
+      tourName: fullBooking.tourSchedule?.tour?.title || "Tour",
+      startDate: fullBooking.tourSchedule?.startDate || "",
+      endDate: fullBooking.tourSchedule?.endDate || "",
+      adultCount: fullBooking.adultCount,
+      childCount: fullBooking.childCount,
+      totalAmount: fullBooking.totalAmount,
+    });
+
+    return fullBooking;
   }
 
   async updateStatus(
@@ -189,6 +219,14 @@ export class BookingService {
 
       booking.status = BookingStatus.CANCELLED;
       await manager.getRepository(Booking).save(booking);
+    });
+
+    // Send cancellation email asynchronously
+    sendBookingCancelledEmail({
+      contactName: booking.contactName,
+      contactEmail: booking.contactEmail,
+      bookingCode: booking.bookingCode,
+      tourName: booking.tourSchedule?.tour?.title || "Tour",
     });
 
     return await this.getById(id);

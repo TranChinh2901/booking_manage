@@ -20,7 +20,7 @@ export function CtaSection() {
           </div>
           <a
             className="inline-flex h-14 cursor-pointer items-center justify-center gap-2 rounded-[8px] bg-[#f97316] px-7 text-base font-black text-white shadow-[0_18px_42px_rgba(249,115,22,0.3)] transition-colors hover:bg-[#ea580c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            href="mailto:hello@northline.example?subject=Trip%20planner%20request"
+            href="mailto:hoang99101@donga.edu.vn?subject=Trip%20planner%20request"
             id="contact"
           >
             Contact a Planner

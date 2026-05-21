@@ -2,6 +2,7 @@ import { apiFetch, toQueryString } from "./client";
 import type {
   Destination,
   PaginatedItems,
+  Review,
   Tour,
   TourListQuery,
   TourSchedule,
@@ -37,4 +38,10 @@ export async function getTourSchedules(tourId?: number) {
     `/tour-schedules${toQueryString({ tourId })}`,
     { cache: "no-store" }
   );
+}
+
+export async function getTourReviews(tourId: number) {
+  return apiFetch<Review[]>(`/reviews${toQueryString({ tourId })}`, {
+    cache: "no-store",
+  });
 }
