@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Not, Repository } from "typeorm";
 import bcrypt from "bcryptjs";
 
 import { AppDataSource } from "@/config/config-database";
@@ -17,8 +17,9 @@ export class UserService {
     this.userRepository = AppDataSource.getRepository(User);
   }
 
-  async getAll(): Promise<User[]> {
+  async getAll(includeInactive = false): Promise<User[]> {
     return await this.userRepository.find({
+      where: includeInactive ? {} : { status: Not(UserStatus.INACTIVE) },
       order: { createdAt: "DESC" },
     });
   }

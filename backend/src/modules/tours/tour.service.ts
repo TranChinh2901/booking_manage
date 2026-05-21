@@ -43,6 +43,10 @@ export class TourService {
       });
     } else if (query.status) {
       queryBuilder.andWhere("tour.status = :status", { status: query.status });
+    } else if (!query.includeInactive) {
+      queryBuilder.andWhere("tour.status != :inactiveStatus", {
+        inactiveStatus: TourStatus.INACTIVE,
+      });
     }
 
     if (query.destinationId) {

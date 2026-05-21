@@ -205,6 +205,14 @@ GET    /api/v1/admin/contact-requests/:id
 PATCH  /api/v1/admin/contact-requests/:id
 ```
 
+Các API `DELETE` cho user, destination, category, tour, tour schedule và post đang dùng xóa mềm để giữ lịch sử booking/thống kê. Sau khi xóa, item không còn hiện trong danh sách mặc định. Nếu admin cần xem lại dữ liệu đã ẩn/xóa mềm, thêm query `includeInactive=true`, ví dụ:
+
+```bash
+GET /api/v1/admin/users?includeInactive=true
+GET /api/v1/admin/tours?includeInactive=true
+GET /api/v1/admin/posts?includeInactive=true
+```
+
 ## Cấu trúc thư mục
 ```bash
 src/

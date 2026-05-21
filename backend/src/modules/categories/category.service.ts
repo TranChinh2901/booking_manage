@@ -17,9 +17,12 @@ export class CategoryService {
     this.categoryRepository = AppDataSource.getRepository(Category);
   }
 
-  async getAll(activeOnly = false): Promise<Category[]> {
+  async getAll(activeOnly = false, includeInactive = false): Promise<Category[]> {
     return await this.categoryRepository.find({
-      where: activeOnly ? { status: CategoryStatus.ACTIVE } : {},
+      where:
+        activeOnly || !includeInactive
+          ? { status: CategoryStatus.ACTIVE }
+          : {},
       order: { createdAt: "DESC" },
     });
   }

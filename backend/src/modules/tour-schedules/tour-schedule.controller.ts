@@ -16,7 +16,8 @@ class TourScheduleController {
     const activeOnly = req.baseUrl.includes("/api/v1/tour-schedules");
     const schedules = await tourScheduleService.getAll(
       req.query.tourId ? Number(req.query.tourId) : undefined,
-      activeOnly
+      activeOnly,
+      req.query.includeInactive === "true"
     );
 
     return new AppResponse({

@@ -50,6 +50,7 @@ export interface TourQueryDto {
   destinationId?: number;
   categoryId?: number;
   status?: TourStatus;
+  includeInactive?: boolean;
   page?: number;
   limit?: number;
 }

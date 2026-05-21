@@ -13,7 +13,8 @@ import { toUserResponseDto } from "./user.mapper";
 
 class UserController {
   async getAll(req: Request, res: Response) {
-    const result = await userService.getAll();
+    const includeInactive = req.query.includeInactive === "true";
+    const result = await userService.getAll(includeInactive);
 
     // Converts list User entity returned from the service to list UserResponseDto
     const listUserDto: UserResponseDto[] = result.map((user) =>

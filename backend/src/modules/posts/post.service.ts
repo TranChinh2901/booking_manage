@@ -33,6 +33,10 @@ export class PostService {
       });
     } else if (query.status) {
       queryBuilder.andWhere("post.status = :status", { status: query.status });
+    } else if (!query.includeInactive) {
+      queryBuilder.andWhere("post.status != :hiddenStatus", {
+        hiddenStatus: PostStatus.HIDDEN,
+      });
     }
 
     if (query.keyword) {

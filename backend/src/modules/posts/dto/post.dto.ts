@@ -21,6 +21,7 @@ export interface UpdatePostDto {
 export interface PostQueryDto {
   keyword?: string;
   status?: PostStatus;
+  includeInactive?: boolean;
   page?: number;
   limit?: number;
 }

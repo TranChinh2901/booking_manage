@@ -23,4 +23,12 @@ export const loadedEnv = {
     apiSecret: process.env.CLOUDINARY_API_SECRET || "",
     folder: process.env.CLOUDINARY_FOLDER || "travel-booking",
   },
+  momo: {
+    partnerCode: process.env.MOMO_PARTNER_CODE || "",
+    accessKey: process.env.MOMO_ACCESS_KEY || "",
+    secretKey: process.env.MOMO_SECRET_KEY || "",
+    endpoint: process.env.MOMO_ENDPOINT || "https://test-payment.momo.vn/v2/gateway/api/create",
+    returnUrl: process.env.MOMO_RETURN_URL || "http://localhost:3001/payment/result",
+    notifyUrl: process.env.MOMO_NOTIFY_URL || "http://localhost:4000/api/v1/payments/momo/callback",
+  },
 };

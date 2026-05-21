@@ -14,7 +14,11 @@ import { toDestinationResponseDto } from "./destination.mapper";
 class DestinationController {
   async getAll(req: Request, res: Response) {
     const activeOnly = req.baseUrl.includes("/api/v1/destinations");
-    const destinations = await destinationService.getAll(activeOnly);
+    const includeInactive = req.query.includeInactive === "true";
+    const destinations = await destinationService.getAll(
+      activeOnly,
+      includeInactive
+    );
 
     return new AppResponse({
       message: SuccessMessages.DESTINATION.DESTINATION_GET,

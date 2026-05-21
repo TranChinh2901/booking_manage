@@ -6,6 +6,7 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { createBooking } from "@/lib/api/bookings";
 import { ApiError } from "@/lib/api/client";
+import { createMoMoPayment } from "@/lib/api/payments";
 import type { Booking, TourSchedule } from "@/lib/api/types";
 import { clearAuth, getStoredAuth, type StoredAuth } from "@/lib/auth-storage";
 import { formatCurrency, formatDate } from "@/lib/format";
@@ -20,6 +21,7 @@ export function BookingForm({ schedule }: BookingFormProps) {
   const [authChecked, setAuthChecked] = useState(false);
   const [adultCount, setAdultCount] = useState(1);
   const [childCount, setChildCount] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "momo">("cash");
   const [booking, setBooking] = useState<Booking | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -59,7 +61,18 @@ export function BookingForm({ schedule }: BookingFormProps) {
         auth.accessToken
       );
 
-      setBooking(result);
+      // Create MoMo payment and redirect
+      if (paymentMethod === "momo") {
+        try {
+          const payment = await createMoMoPayment(result.id, auth.accessToken);
+          window.location.href = payment.payUrl;
+          return;
+        } catch {
+          setBooking(result);
+        }
+      } else {
+        setBooking(result);
+      }
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
         clearAuth();
@@ -222,6 +235,22 @@ export function BookingForm({ schedule }: BookingFormProps) {
           {error}
         </p>
       ) : null}
+
+      <div className="mt-5">
+        <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
+          Phương thức thanh toán
+        </span>
+        <div className="flex gap-3">
+          <label className={`flex flex-1 cursor-pointer items-center gap-2 rounded-[8px] border p-4 ${paymentMethod === "cash" ? "border-[#0ea5e9] bg-[#f0f9ff]" : "border-[#d7edf4] bg-[#f8fdff]"}`}>
+            <input type="radio" name="paymentMethod" value="cash" checked={paymentMethod === "cash"} onChange={() => setPaymentMethod("cash")} className="accent-[#0ea5e9]" />
+            <span className="text-sm font-semibold text-[#0c3144]">Tiền mặt</span>
+          </label>
+          <label className={`flex flex-1 cursor-pointer items-center gap-2 rounded-[8px] border p-4 ${paymentMethod === "momo" ? "border-[#a50064] bg-[#fff0f6]" : "border-[#d7edf4] bg-[#f8fdff]"}`}>
+            <input type="radio" name="paymentMethod" value="momo" checked={paymentMethod === "momo"} onChange={() => setPaymentMethod("momo")} className="accent-[#a50064]" />
+            <span className="text-sm font-semibold text-[#0c3144]">Ví MoMo</span>
+          </label>
+        </div>
+      </div>
 
       <button
         className="mt-6 inline-flex h-12 w-full cursor-pointer items-center justify-center rounded-[8px] bg-[#f97316] px-6 text-sm font-black text-white transition-colors hover:bg-[#ea580c] disabled:cursor-not-allowed disabled:opacity-70"

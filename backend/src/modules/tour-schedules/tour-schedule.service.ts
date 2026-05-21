@@ -25,7 +25,11 @@ export class TourScheduleService {
     this.tourRepository = AppDataSource.getRepository(Tour);
   }
 
-  async getAll(tourId?: number, activeOnly = false): Promise<TourSchedule[]> {
+  async getAll(
+    tourId?: number,
+    activeOnly = false,
+    includeInactive = false
+  ): Promise<TourSchedule[]> {
     const queryBuilder = this.scheduleRepository
       .createQueryBuilder("schedule")
       .leftJoinAndSelect("schedule.tour", "tour")
@@ -44,6 +48,10 @@ export class TourScheduleService {
           status: TourScheduleStatus.OPEN,
         })
         .andWhere("tour.status = :tourStatus", { tourStatus: TourStatus.ACTIVE });
+    } else if (!includeInactive) {
+      queryBuilder.andWhere("schedule.status != :cancelledStatus", {
+        cancelledStatus: TourScheduleStatus.CANCELLED,
+      });
     }
 
     return await queryBuilder.getMany();

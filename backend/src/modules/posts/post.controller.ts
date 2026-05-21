@@ -15,6 +15,7 @@ class PostController {
       {
         keyword: req.query.keyword as string | undefined,
         status: req.query.status as PostQueryDto["status"],
+        includeInactive: req.query.includeInactive === "true",
         page: req.query.page ? Number(req.query.page) : undefined,
         limit: req.query.limit ? Number(req.query.limit) : undefined,
       },

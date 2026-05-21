@@ -184,6 +184,10 @@ function parseImagesInput(value: string): TourImage[] {
     }));
 }
 
+function confirmDelete(label: string) {
+  return window.confirm(`Delete ${label}? This action will use the admin delete endpoint.`);
+}
+
 function Field({
   label,
   children,
@@ -702,7 +706,7 @@ export function AdminDashboard() {
           {section === "users" ? (
             <UsersSection
               onDelete={(id) =>
-                runAction(() => deleteAdminUser(id, token), "User disabled.")
+                runAction(() => deleteAdminUser(id, token), "User deleted.")
               }
               onUploadAvatar={(file, onUploaded) =>
                 void uploadSingleImage(file, "users", onUploaded)
@@ -715,7 +719,7 @@ export function AdminDashboard() {
           ) : null}
 
           {section === "destinations" ? (
-            <Panel title="Destinations" description="Create, edit, or deactivate destination records.">
+            <Panel title="Destinations" description="Create, edit, or delete destination records.">
               <form
                 className="grid gap-4 lg:grid-cols-2"
                 onSubmit={(event) => {
@@ -813,7 +817,7 @@ export function AdminDashboard() {
               <DestinationTable
                 destinations={destinations}
                 onDelete={(id) =>
-                  runAction(() => deleteDestination(id, token), "Destination deactivated.")
+                  runAction(() => deleteDestination(id, token), "Destination deleted.")
                 }
                 onEdit={(item) => {
                   setEditingDestinationId(item.id);
@@ -830,7 +834,7 @@ export function AdminDashboard() {
           ) : null}
 
           {section === "categories" ? (
-            <Panel title="Categories" description="Create, edit, or deactivate tour categories.">
+            <Panel title="Categories" description="Create, edit, or delete tour categories.">
               <form
                 className="grid gap-4 lg:grid-cols-2"
                 onSubmit={(event) => {
@@ -907,7 +911,7 @@ export function AdminDashboard() {
               <CategoryTable
                 categories={categories}
                 onDelete={(id) =>
-                  runAction(() => deleteCategory(id, token), "Category deactivated.")
+                  runAction(() => deleteCategory(id, token), "Category deleted.")
                 }
                 onEdit={(item) => {
                   setEditingCategoryId(item.id);
@@ -923,7 +927,7 @@ export function AdminDashboard() {
           ) : null}
 
           {section === "tours" ? (
-            <Panel title="Tours" description="Create, edit, and deactivate tour products. Put one image URL per line.">
+            <Panel title="Tours" description="Create, edit, and delete tour products. Put one image URL per line.">
               <TourForm
                 categories={categories}
                 destinations={destinations}
@@ -970,7 +974,7 @@ export function AdminDashboard() {
                 setForm={setTourForm}
               />
               <TourTable
-                onDelete={(id) => runAction(() => deleteTour(id, token), "Tour deactivated.")}
+                onDelete={(id) => runAction(() => deleteTour(id, token), "Tour deleted.")}
                 onEdit={(item) => {
                   setEditingTourId(item.id);
                   setTourForm({
@@ -1234,7 +1238,7 @@ function UsersSection({
   onUploadAvatar: (file: File, onUploaded: (url: string) => void) => void;
 }) {
   return (
-    <Panel title="Users" description="Update profile fields, role, and account status. Delete marks a user inactive.">
+    <Panel title="Users" description="Update profile fields, role, account status, or delete a user through the admin API.">
       <Table headers={["User", "Phone", "Role", "Status", "Actions"]}>
         {users.map((user) => (
           <UserRow
@@ -1310,8 +1314,16 @@ function UserRow({
         >
           Save
         </Button>
-        <Button onClick={() => onDelete(user.id)} tone="danger" type="button">
-          Disable
+        <Button
+          onClick={() => {
+            if (confirmDelete(user.email)) {
+              onDelete(user.id);
+            }
+          }}
+          tone="danger"
+          type="button"
+        >
+          Delete
         </Button>
       </td>
     </tr>
@@ -1340,8 +1352,16 @@ function DestinationTable({
               <Button onClick={() => onEdit(item)} tone="secondary" type="button">
                 Edit
               </Button>
-              <Button onClick={() => onDelete(item.id)} tone="danger" type="button">
-                Deactivate
+              <Button
+                onClick={() => {
+                  if (confirmDelete(item.name)) {
+                    onDelete(item.id);
+                  }
+                }}
+                tone="danger"
+                type="button"
+              >
+                Delete
               </Button>
             </td>
           </tr>
@@ -1373,8 +1393,16 @@ function CategoryTable({
               <Button onClick={() => onEdit(item)} tone="secondary" type="button">
                 Edit
               </Button>
-              <Button onClick={() => onDelete(item.id)} tone="danger" type="button">
-                Deactivate
+              <Button
+                onClick={() => {
+                  if (confirmDelete(item.name)) {
+                    onDelete(item.id);
+                  }
+                }}
+                tone="danger"
+                type="button"
+              >
+                Delete
               </Button>
             </td>
           </tr>
@@ -1586,8 +1614,16 @@ function TourTable({
               <Button onClick={() => onEdit(tour)} tone="secondary" type="button">
                 Edit
               </Button>
-              <Button onClick={() => onDelete(tour.id)} tone="danger" type="button">
-                Deactivate
+              <Button
+                onClick={() => {
+                  if (confirmDelete(tour.title)) {
+                    onDelete(tour.id);
+                  }
+                }}
+                tone="danger"
+                type="button"
+              >
+                Delete
               </Button>
             </td>
           </tr>
@@ -1746,7 +1782,15 @@ function ScheduleTable({
               <Button onClick={() => onEdit(schedule)} tone="secondary" type="button">
                 Edit
               </Button>
-              <Button onClick={() => onDelete(schedule.id)} tone="danger" type="button">
+              <Button
+                onClick={() => {
+                  if (confirmDelete(String(schedule.id))) {
+                    onDelete(schedule.id);
+                  }
+                }}
+                tone="danger"
+                type="button"
+              >
                 Delete
               </Button>
             </td>
@@ -1898,7 +1942,15 @@ function ReviewRow({
         <Button onClick={() => onUpdate(review.id, { rating, comment, status })} type="button">
           Save
         </Button>
-        <Button onClick={() => onDelete(review.id)} tone="danger" type="button">
+        <Button
+          onClick={() => {
+            if (confirmDelete(`review #${review.id}`)) {
+              onDelete(review.id);
+            }
+          }}
+          tone="danger"
+          type="button"
+        >
           Delete
         </Button>
       </td>
@@ -2015,7 +2067,15 @@ function PostTable({
               <Button onClick={() => onEdit(post)} tone="secondary" type="button">
                 Edit
               </Button>
-              <Button onClick={() => onDelete(post.id)} tone="danger" type="button">
+              <Button
+                onClick={() => {
+                  if (confirmDelete(post.title)) {
+                    onDelete(post.id);
+                  }
+                }}
+                tone="danger"
+                type="button"
+              >
                 Delete
               </Button>
             </td>

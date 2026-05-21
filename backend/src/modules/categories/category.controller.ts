@@ -11,7 +11,8 @@ import { CreateCategoryDto, UpdateCategoryDto } from "./dto/category.dto";
 class CategoryController {
   async getAll(req: Request, res: Response) {
     const activeOnly = req.baseUrl.includes("/api/v1/categories");
-    const categories = await categoryService.getAll(activeOnly);
+    const includeInactive = req.query.includeInactive === "true";
+    const categories = await categoryService.getAll(activeOnly, includeInactive);
 
     return new AppResponse({
       message: SuccessMessages.CATEGORY.CATEGORY_GET,

@@ -23,9 +23,12 @@ export class DestinationService {
     this.destinationRepository = AppDataSource.getRepository(Destination);
   }
 
-  async getAll(activeOnly = false): Promise<Destination[]> {
+  async getAll(activeOnly = false, includeInactive = false): Promise<Destination[]> {
     return await this.destinationRepository.find({
-      where: activeOnly ? { status: DestinationStatus.ACTIVE } : {},
+      where:
+        activeOnly || !includeInactive
+          ? { status: DestinationStatus.ACTIVE }
+          : {},
       order: { createdAt: "DESC" },
     });
   }
