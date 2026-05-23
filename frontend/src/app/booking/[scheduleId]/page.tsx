@@ -43,20 +43,20 @@ export default async function BookingPage({ params }: BookingPageProps) {
         <div className="mx-auto grid max-w-[1200px] gap-8 pt-14 lg:grid-cols-[0.9fr_1.1fr]">
           <aside className="rounded-[8px] border border-[#dff3fa] bg-white p-6 shadow-[0_24px_70px_rgba(12,74,110,0.1)]">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f97316]">
-              Book tour
+              Đặt tour
             </p>
             <h1 className="mt-3 text-4xl font-black leading-tight text-[#062f42]">
-              {tour?.title || "Travel tour"}
+              {tour?.title || "Tour du lịch"}
             </h1>
             <div className="mt-6 space-y-4 text-base font-semibold leading-7 text-[#496779]">
-              <p>Destination: {tour ? getTourLocation(tour) : "Updating"}</p>
-              <p>Duration: {tour ? getTourDuration(tour) : "Updating"}</p>
+              <p>Điểm đến: {tour ? getTourLocation(tour) : "Đang cập nhật"}</p>
+              <p>Thời gian: {tour ? getTourDuration(tour) : "Đang cập nhật"}</p>
               <p>
-                Schedule: {formatDate(schedule.startDate)} - {formatDate(schedule.endDate)}
+                Lịch trình: {formatDate(schedule.startDate)} - {formatDate(schedule.endDate)}
               </p>
-              <p>Remaining seats: {schedule.remainingSeats}</p>
-              <p>Adult price: {formatCurrency(schedule.priceAdult)}</p>
-              <p>Child price: {formatCurrency(schedule.priceChild)}</p>
+              <p>Số chỗ còn lại: {schedule.remainingSeats}</p>
+              <p>Giá người lớn: {formatCurrency(schedule.priceAdult)}</p>
+              <p>Giá trẻ em: {formatCurrency(schedule.priceChild)}</p>
             </div>
           </aside>
 

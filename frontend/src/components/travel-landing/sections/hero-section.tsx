@@ -19,14 +19,14 @@ export function HeroSection() {
         <div>
           <p className="inline-flex items-center gap-3 rounded-[8px] border border-white/80 bg-white/72 px-4 py-2 text-sm font-black text-[#0e7490] shadow-[0_14px_42px_rgba(12,74,110,0.1)] backdrop-blur-lg">
             <span className="h-2 w-2 rounded-full bg-[#f97316]" />
-            Tailor-made travel, built like a modern product
+            Du lịch theo yêu cầu, trải nghiệm hiện đại
           </p>
           <h1 className="mt-6 max-w-3xl text-5xl font-black leading-[0.95] tracking-normal text-[#062f42] sm:text-6xl lg:text-7xl">
-            Travel brighter with trips designed around you.
+            Hành trình rực rỡ, thiết kế riêng cho bạn.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-[#496779]">
-            Discover vivid destinations, compare curated experiences, and
-            preview your route before a single booking is made.
+            Khám phá những điểm đến sống động, so sánh trải nghiệm được tuyển chọn, và
+            xem trước lộ trình trước khi đặt chỗ.
           </p>
 
           <BookingSearchForm />

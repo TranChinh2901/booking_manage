@@ -9,9 +9,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Northline Travel | Tailor-Made Trips",
+  title: "Northline Travel | Chuyến Đi Theo Yêu Cầu",
   description:
-    "Colorful travel planning with destination showcases, booking previews, and human-paced itineraries.",
+    "Lên kế hoạch du lịch với điểm đến hấp dẫn, xem trước lịch trình và đặt tour dễ dàng.",
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="vi"
       className={`${plusJakarta.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

@@ -9,14 +9,14 @@ export function BookingPreview() {
       <div className="mx-auto grid max-w-[1200px] gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
         <div>
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f97316]">
-            Booking Preview
+            Xem trước đặt chỗ
           </p>
           <h2 className="mt-3 text-4xl font-black leading-tight text-[#062f42] sm:text-5xl">
-            See the trip shape before you commit.
+            Xem hình dạng chuyến đi trước khi quyết định.
           </h2>
           <p className="mt-5 text-lg leading-8 text-[#496779]">
-            Every preview includes dates, route logic, hotel mood, private
-            transfers, and guided moments with space left for wandering.
+            Mỗi bản xem trước bao gồm ngày, lộ trình, phong cách khách sạn, xe đưa đón riêng,
+            và những khoảnh khắc có hướng dẫn viên cùng thời gian tự do khám phá.
           </p>
         </div>
 
@@ -24,10 +24,10 @@ export function BookingPreview() {
           <div className="flex flex-col gap-4 border-b border-[#d7edf4] pb-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.14em] text-[#0e7490]">
-                Featured Trip
+                Chuyến đi nổi bật
               </p>
               <h3 className="mt-2 text-3xl font-black text-[#062f42]">
-                Da Nang color route
+                Tuyến màu sắc Đà Nẵng
               </h3>
             </div>
             <p className="rounded-[8px] bg-[#ffedd5] px-4 py-3 text-lg font-black text-[#c2410c]">
@@ -52,9 +52,9 @@ export function BookingPreview() {
                 <CalendarIcon />
               </span>
               <div>
-                <p className="font-black">Preview call available</p>
+                <p className="font-black">Có thể gọi xem trước</p>
                 <p className="mt-1 text-sm font-semibold text-white/72">
-                  Review the route with a planner this week.
+                  Xem lộ trình cùng chuyên viên trong tuần này.
                 </p>
               </div>
             </div>
@@ -62,7 +62,7 @@ export function BookingPreview() {
               className="inline-flex h-11 cursor-pointer items-center justify-center rounded-[8px] bg-[#f97316] px-5 text-sm font-black text-white transition-colors hover:bg-[#ea580c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               href="#planner"
             >
-              Customize
+              Tùy chỉnh
             </a>
           </div>
         </article>

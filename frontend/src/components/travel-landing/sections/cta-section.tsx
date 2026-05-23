@@ -8,14 +8,14 @@ export function CtaSection() {
         <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#fef08a]">
-              Plan Your Next Adventure
+              Lên kế hoạch chuyến đi
             </p>
             <h2 className="mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-              Plan your next adventure.
+              Lên kế hoạch cho chuyến phiêu lưu tiếp theo.
             </h2>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-white/74">
-              Share your destination shortlist, travel dates, and ideal pace. A
-              planner will turn it into a clear first route.
+              Chia sẻ danh sách điểm đến, ngày đi, và nhịp độ lý tưởng của bạn. Chuyên viên
+              sẽ lên lộ trình rõ ràng cho bạn.
             </p>
           </div>
           <a
@@ -23,7 +23,7 @@ export function CtaSection() {
             href="mailto:hoang99101@donga.edu.vn?subject=Trip%20planner%20request"
             id="contact"
           >
-            Contact a Planner
+            Liên hệ tư vấn
             <ArrowIcon />
           </a>
         </div>

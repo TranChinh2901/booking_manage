@@ -6,10 +6,10 @@ export function TestimonialsSection() {
       <div className="mx-auto max-w-[1200px]">
         <div className="max-w-3xl">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#0e7490]">
-            Traveler Testimonials
+            Cảm nhận khách hàng
           </p>
           <h2 className="mt-3 text-4xl font-black leading-tight text-[#062f42] sm:text-5xl">
-            Planned carefully. Remembered vividly.
+            Lên kế hoạch cẩn thận. Ghi nhớ trọn vẹn.
           </h2>
         </div>
 

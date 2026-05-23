@@ -42,7 +42,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       router.push(searchParams.get("next") || (auth.user.role === "ADMIN" ? "/admin" : "/tours"));
       router.refresh();
     } catch {
-      setError("Unable to process your request.");
+      setError("Không thể xử lý yêu cầu của bạn.");
     } finally {
       setLoading(false);
     }
@@ -54,19 +54,19 @@ export function AuthForm({ mode }: AuthFormProps) {
       onSubmit={handleSubmit}
     >
       <h1 className="text-3xl font-black text-[#062f42]">
-        {isRegister ? "Create account" : "Login"}
+        {isRegister ? "Tạo tài khoản" : "Đăng nhập"}
       </h1>
       <p className="mt-3 text-base font-semibold leading-7 text-[#496779]">
         {isRegister
-          ? "Create an account to book tours and track your booking history."
-          : "Log in to book tours and manage your bookings."}
+          ? "Tạo tài khoản để đặt tour và theo dõi lịch sử đặt chỗ."
+          : "Đăng nhập để đặt tour và quản lý đơn đặt của bạn."}
       </p>
 
       <div className="mt-6 space-y-4">
         {isRegister ? (
           <label className="block">
             <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-              Full name
+              Họ và tên
             </span>
             <input
               className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none transition-colors focus:border-[#0ea5e9]"
@@ -92,7 +92,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         {isRegister ? (
           <label className="block">
             <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-              Phone number
+              Số điện thoại
             </span>
             <input
               className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none transition-colors focus:border-[#0ea5e9]"
@@ -104,7 +104,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         <label className="block">
           <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-            Password
+            Mật khẩu
           </span>
           <input
             className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none transition-colors focus:border-[#0ea5e9]"
@@ -127,16 +127,16 @@ export function AuthForm({ mode }: AuthFormProps) {
         disabled={loading}
         type="submit"
       >
-        {loading ? "Processing..." : isRegister ? "Register" : "Login"}
+        {loading ? "Đang xử lý..." : isRegister ? "Đăng ký" : "Đăng nhập"}
       </button>
 
       <p className="mt-5 text-center text-sm font-bold text-[#496779]">
-        {isRegister ? "Already have an account?" : "Do not have an account?"}{" "}
+        {isRegister ? "Đã có tài khoản?" : "Chưa có tài khoản?"}{" "}
         <Link
           className="text-[#0e7490]"
           href={isRegister ? "/login" : "/register"}
         >
-          {isRegister ? "Login" : "Register"}
+          {isRegister ? "Đăng nhập" : "Đăng ký"}
         </Link>
       </p>
     </form>

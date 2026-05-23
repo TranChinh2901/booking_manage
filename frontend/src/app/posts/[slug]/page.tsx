@@ -42,7 +42,7 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
 
         <article className="mx-auto max-w-[1200px] pt-14">
           <Link className="text-sm font-black text-[#0e7490]" href="/posts">
-            Back to posts
+            Quay lại danh sách bài viết
           </Link>
           <div className="mt-8 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
             <div>

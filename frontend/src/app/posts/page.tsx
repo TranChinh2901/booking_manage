@@ -54,7 +54,7 @@ function PostCard({ post }: { post: Post }) {
           {post.title}
         </h2>
         <p className="mt-3 min-h-14 text-base font-semibold leading-7 text-[#496779]">
-          {post.excerpt || "Travel notes, planning ideas, and destination guidance."}
+          {post.excerpt || "Ghi chú du lịch, ý tưởng lên kế hoạch và hướng dẫn điểm đến."}
         </p>
       </div>
     </Link>
@@ -76,13 +76,13 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
           <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f97316]">
-                Travel Guides
+                Cẩm nang du lịch
               </p>
               <h1 className="mt-3 text-4xl font-black leading-tight text-[#062f42] sm:text-6xl">
-                Stories for better trips.
+                Câu chuyện cho chuyến đi tuyệt vời.
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-8 text-[#496779]">
-                Read destination notes, planning guides, and travel ideas before booking.
+                Đọc ghi chú điểm đến, hướng dẫn lên kế hoạch và ý tưởng du lịch trước khi đặt tour.
               </p>
             </div>
 
@@ -95,25 +95,25 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
                 className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none transition-colors placeholder:text-[#7b98a8] focus:border-[#0ea5e9] sm:w-72"
                 defaultValue={keyword || ""}
                 name="keyword"
-                placeholder="Search posts..."
+                placeholder="Tìm kiếm bài viết..."
                 type="text"
               />
               <button
                 className="inline-flex h-12 cursor-pointer items-center justify-center rounded-[8px] bg-[#f97316] px-6 text-sm font-black text-white transition-colors hover:bg-[#ea580c]"
                 type="submit"
               >
-                Search
+                Tìm kiếm
               </button>
             </form>
           </div>
 
           {!result ? (
             <div className="mt-12 rounded-[8px] border border-[#fed7aa] bg-[#fff7ed] p-6 text-base font-semibold text-[#9a3412]">
-              Unable to connect to the backend. Start the backend and reload this page.
+              Không thể kết nối đến máy chủ. Vui lòng khởi động backend và tải lại trang.
             </div>
           ) : posts.length === 0 ? (
             <div className="mt-12 rounded-[8px] border border-[#dff3fa] bg-white p-6 text-base font-semibold text-[#496779]">
-              No matching posts found.
+              Không tìm thấy bài viết phù hợp.
             </div>
           ) : (
             <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

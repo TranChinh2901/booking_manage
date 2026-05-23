@@ -26,10 +26,10 @@ export function DestinationShowcase({
       <div className="mx-auto max-w-[1200px]">
         <div className="max-w-3xl">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f97316]">
-            Destination Showcase
+            Điểm đến nổi bật
           </p>
           <h2 className="mt-3 text-4xl font-black leading-tight text-[#062f42] sm:text-5xl">
-            Pick a place with the right color, climate, and pace.
+            Chọn nơi có màu sắc, khí hậu và nhịp sống phù hợp.
           </h2>
         </div>
 
@@ -56,18 +56,18 @@ export function DestinationShowcase({
                   </div>
                   <div className="p-5">
                     <p className="text-sm font-black uppercase tracking-[0.14em] text-[#64748b]">
-                      Destination
+                      Điểm đến
                     </p>
                     <h3 className="mt-2 text-3xl font-black text-[#062f42]">
                       {destination.name}
                     </h3>
                     <p className="mt-3 min-h-14 text-base font-semibold leading-7 text-[#496779]">
                       {destination.description ||
-                        "Explore tours and departures for this destination."}
+                        "Khám phá các tour và lịch khởi hành cho điểm đến này."}
                     </p>
                     <div className="mt-5 border-t border-[#e3f2f7] pt-4">
                       <span className="text-sm font-black text-[#0e7490]">
-                        View tours
+                        Xem tour
                       </span>
                     </div>
                   </div>
@@ -98,7 +98,7 @@ export function DestinationShowcase({
                       {tour.title}
                     </h3>
                     <p className="mt-3 min-h-14 text-base font-semibold leading-7 text-[#496779]">
-                      {tour.shortDescription || tour.category?.name || "Complete travel itinerary"}
+                      {tour.shortDescription || tour.category?.name || "Lịch trình du lịch trọn gói"}
                     </p>
                     <div className="mt-5 flex items-center justify-between border-t border-[#e3f2f7] pt-4">
                       <span className="text-sm font-black text-[#0e7490]">

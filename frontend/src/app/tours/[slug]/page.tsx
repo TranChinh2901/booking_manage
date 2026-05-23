@@ -69,7 +69,7 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
         <div className="mx-auto grid max-w-[1200px] gap-10 pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <div>
             <Link className="text-sm font-black text-[#0e7490]" href="/tours">
-              Back to tours
+              Quay lại danh sách tour
             </Link>
             <p className="mt-8 text-sm font-black uppercase tracking-[0.18em] text-[#f97316]">
               {getTourLocation(tour)}
@@ -78,13 +78,13 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
               {tour.title}
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-[#496779]">
-              {tour.shortDescription || "A complete travel journey with a clear itinerary."}
+              {tour.shortDescription || "Hành trình du lịch trọn gói với lịch trình rõ ràng."}
             </p>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
               <div className="rounded-[8px] bg-white p-4 shadow-[0_18px_45px_rgba(12,74,110,0.08)]">
                 <p className="text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-                  Duration
+                  Thời gian
                 </p>
                 <p className="mt-2 text-lg font-black text-[#062f42]">
                   {getTourDuration(tour)}
@@ -92,7 +92,7 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
               </div>
               <div className="rounded-[8px] bg-white p-4 shadow-[0_18px_45px_rgba(12,74,110,0.08)]">
                 <p className="text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-                  From
+                  Giá từ
                 </p>
                 <p className="mt-2 text-lg font-black text-[#f97316]">
                   {getTourPrice(tour)}
@@ -100,10 +100,10 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
               </div>
               <div className="rounded-[8px] bg-white p-4 shadow-[0_18px_45px_rgba(12,74,110,0.08)]">
                 <p className="text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-                  Guests
+                  Số khách
                 </p>
                 <p className="mt-2 text-lg font-black text-[#062f42]">
-                  Up to {tour.maxPeople}
+                  Tối đa {tour.maxPeople}
                 </p>
               </div>
             </div>
@@ -123,21 +123,21 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
 
         <div className="mx-auto mt-12 grid max-w-[1200px] gap-8 lg:grid-cols-[1fr_380px]">
           <article className="rounded-[8px] border border-[#dff3fa] bg-white p-6 shadow-[0_20px_55px_rgba(12,74,110,0.08)]">
-            <h2 className="text-3xl font-black text-[#062f42]">Tour information</h2>
+            <h2 className="text-3xl font-black text-[#062f42]">Thông tin tour</h2>
             <div className="mt-5 space-y-4 text-base font-semibold leading-8 text-[#496779]">
-              <p>{tour.description || tour.shortDescription || "Detailed content will be updated soon."}</p>
-              {tour.departureLocation ? <p>Departure: {tour.departureLocation}</p> : null}
-              {tour.transport ? <p>Transport: {tour.transport}</p> : null}
-              {tour.category?.name ? <p>Category: {tour.category.name}</p> : null}
+              <p>{tour.description || tour.shortDescription || "Nội dung chi tiết sẽ được cập nhật sớm."}</p>
+              {tour.departureLocation ? <p>Nơi khởi hành: {tour.departureLocation}</p> : null}
+              {tour.transport ? <p>Phương tiện: {tour.transport}</p> : null}
+              {tour.category?.name ? <p>Danh mục: {tour.category.name}</p> : null}
             </div>
           </article>
 
           <aside className="rounded-[8px] border border-[#dff3fa] bg-white p-5 shadow-[0_20px_55px_rgba(12,74,110,0.08)]">
-            <h2 className="text-2xl font-black text-[#062f42]">Departure schedules</h2>
+            <h2 className="text-2xl font-black text-[#062f42]">Lịch khởi hành</h2>
             <div className="mt-5 space-y-3">
               {schedules.length === 0 ? (
                 <p className="text-base font-semibold leading-7 text-[#496779]">
-                  No open departure schedules yet.
+                  Chưa có lịch khởi hành nào.
                 </p>
               ) : (
                 schedules.map((schedule) => (
@@ -149,13 +149,13 @@ export default async function TourDetailPage({ params }: TourDetailPageProps) {
                       {formatDate(schedule.startDate)} - {formatDate(schedule.endDate)}
                     </p>
                     <p className="mt-2 text-sm font-bold text-[#496779]">
-                      {schedule.remainingSeats} seats left
+                      Còn {schedule.remainingSeats} chỗ
                     </p>
                     <Link
                       className="mt-4 inline-flex h-11 w-full cursor-pointer items-center justify-center rounded-[8px] bg-[#f97316] px-5 text-sm font-black text-white transition-colors hover:bg-[#ea580c]"
                       href={`/booking/${schedule.id}`}
                     >
-                      Book tour
+                      Đặt tour
                     </Link>
                   </div>
                 ))

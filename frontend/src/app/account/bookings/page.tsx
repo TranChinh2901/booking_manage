@@ -10,13 +10,13 @@ export default function AccountBookingsPage() {
         <Navbar />
         <div className="mx-auto max-w-[1200px] pt-14">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f97316]">
-            Account
+            Tài khoản
           </p>
           <h1 className="mt-3 text-4xl font-black leading-tight text-[#062f42] sm:text-6xl">
-            My bookings.
+            Đơn đặt của tôi.
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-[#496779]">
-            Track your tour history, processing status, and cancel bookings when needed.
+            Theo dõi lịch sử tour, trạng thái xử lý và hủy đặt tour khi cần.
           </p>
           <MyBookings />
         </div>

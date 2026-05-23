@@ -66,7 +66,7 @@ function TourCard({ tour }: { tour: Tour }) {
           {tour.title}
         </h2>
         <p className="mt-3 min-h-14 text-base font-semibold leading-7 text-[#496779]">
-          {tour.shortDescription || tour.category?.name || "Complete travel itinerary"}
+          {tour.shortDescription || tour.category?.name || "Hành trình du lịch trọn gói"}
         </p>
         <div className="mt-5 flex items-center justify-between border-t border-[#e3f2f7] pt-4">
           <span className="text-sm font-black text-[#0e7490]">
@@ -106,12 +106,12 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
               </p>
               <h1 className="mt-3 text-4xl font-black leading-tight text-[#062f42] sm:text-6xl">
                 {selectedDestination
-                  ? `Tours in ${selectedDestination.name}.`
-                  : "Choose the right journey."}
+                  ? `Tour tại ${selectedDestination.name}.`
+                  : "Chọn hành trình phù hợp."}
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-8 text-[#496779]">
                 {selectedDestination?.description ||
-                  "Search tours by destination, compare adult prices, duration, and departure details."}
+                  "Tìm kiếm tour theo điểm đến, so sánh giá, thời gian và lịch khởi hành."}
               </p>
             </div>
 
@@ -125,7 +125,7 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
                 defaultValue={destinationId || ""}
                 name="destinationId"
               >
-                <option value="">All destinations</option>
+                <option value="">Tất cả điểm đến</option>
                 {destinations.map((destination: Destination) => (
                   <option key={destination.id} value={destination.id}>
                     {destination.name}
@@ -136,14 +136,14 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
                 className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none transition-colors placeholder:text-[#7b98a8] focus:border-[#0ea5e9] sm:w-72"
                 defaultValue={keyword || ""}
                 name="keyword"
-                placeholder="Search tours..."
+                placeholder="Tìm kiếm tour..."
                 type="text"
               />
               <button
                 className="inline-flex h-12 cursor-pointer items-center justify-center rounded-[8px] bg-[#f97316] px-6 text-sm font-black text-white transition-colors hover:bg-[#ea580c]"
                 type="submit"
               >
-                Search
+                Tìm kiếm
               </button>
             </form>
           </div>
@@ -151,22 +151,22 @@ export default async function ToursPage({ searchParams }: ToursPageProps) {
           {selectedDestination ? (
             <div className="mt-8 flex flex-wrap items-center gap-3 rounded-[8px] border border-[#dff3fa] bg-white p-4 text-sm font-bold text-[#496779]">
               <span>
-                Filtering by{" "}
+                Đang lọc theo{" "}
                 <strong className="text-[#062f42]">{selectedDestination.name}</strong>
               </span>
               <Link className="text-[#0e7490]" href="/tours">
-                Clear filter
+                Xóa bộ lọc
               </Link>
             </div>
           ) : null}
 
           {!result ? (
             <div className="mt-12 rounded-[8px] border border-[#fed7aa] bg-[#fff7ed] p-6 text-base font-semibold text-[#9a3412]">
-              Unable to connect to the backend. Start the backend and reload this page.
+              Không thể kết nối đến máy chủ. Vui lòng khởi động backend và tải lại trang.
             </div>
           ) : tours.length === 0 ? (
             <div className="mt-12 rounded-[8px] border border-[#dff3fa] bg-white p-6 text-base font-semibold text-[#496779]">
-              No matching tours found.
+              Không tìm thấy tour phù hợp.
             </div>
           ) : (
             <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

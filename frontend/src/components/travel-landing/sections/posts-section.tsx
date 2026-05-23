@@ -22,14 +22,14 @@ export function PostsSection({ posts }: PostsSectionProps) {
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div className="max-w-3xl">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f97316]">
-              Travel Guides
+              Cẩm nang du lịch
             </p>
             <h2 className="mt-3 text-4xl font-black leading-tight text-[#062f42] sm:text-5xl">
-              Read before you choose the route.
+              Đọc trước khi chọn lộ trình.
             </h2>
           </div>
           <Link className="text-sm font-black text-[#0e7490]" href="/posts">
-            View all posts
+            Xem tất cả bài viết
           </Link>
         </div>
 
@@ -57,7 +57,7 @@ export function PostsSection({ posts }: PostsSectionProps) {
                   {post.title}
                 </h3>
                 <p className="mt-3 min-h-14 text-base font-semibold leading-7 text-[#496779]">
-                  {post.excerpt || "Travel notes, planning ideas, and destination guidance."}
+                  {post.excerpt || "Ghi chép du lịch, ý tưởng lên kế hoạch, và hướng dẫn điểm đến."}
                 </p>
               </div>
             </Link>

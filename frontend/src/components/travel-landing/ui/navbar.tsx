@@ -53,7 +53,7 @@ export function Navbar() {
   }
 
   const user = auth?.user;
-  const displayName = user?.name || user?.email || "Account";
+  const displayName = user?.name || user?.email || "Tài khoản";
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
@@ -69,19 +69,19 @@ export function Navbar() {
       </Link>
       <div className="hidden items-center gap-8 text-sm font-bold text-[#496779] md:flex">
         <Link className="transition-colors hover:text-[#0c4a6e]" href="/#destinations">
-          Destinations
+          Điểm đến
         </Link>
         <Link className="transition-colors hover:text-[#0c4a6e]" href="/tours">
-          Tours
+          Tour du lịch
         </Link>
         <Link className="transition-colors hover:text-[#0c4a6e]" href="/posts">
-          Guides
+          Cẩm nang
         </Link>
         <Link className="transition-colors hover:text-[#0c4a6e]" href="/account/bookings">
-          My Bookings
+          Đặt chỗ của tôi
         </Link>
         <Link className="transition-colors hover:text-[#0c4a6e]" href="/#contact">
-          Contact
+          Liên hệ
         </Link>
       </div>
       {user ? (
@@ -125,32 +125,32 @@ export function Navbar() {
                 className="mt-2 block rounded-[8px] px-3 py-2 text-sm font-bold text-[#496779] transition-colors hover:bg-[#f0f9ff] hover:text-[#0c4a6e]"
                 href="/account/profile"
               >
-                Profile
+                Hồ sơ
               </Link>
               <Link
                 className="block rounded-[8px] px-3 py-2 text-sm font-bold text-[#496779] transition-colors hover:bg-[#f0f9ff] hover:text-[#0c4a6e]"
                 href="/account/bookings"
               >
-                My Bookings
+                Đặt chỗ của tôi
               </Link>
               <Link
                 className="block rounded-[8px] px-3 py-2 text-sm font-bold text-[#496779] transition-colors hover:bg-[#f0f9ff] hover:text-[#0c4a6e]"
                 href="/tours"
               >
-                Tours
+                Tour du lịch
               </Link>
               <Link
                 className="block rounded-[8px] px-3 py-2 text-sm font-bold text-[#496779] transition-colors hover:bg-[#f0f9ff] hover:text-[#0c4a6e]"
                 href="/posts"
               >
-                Guides
+                Cẩm nang
               </Link>
               {user.role === "ADMIN" ? (
                 <Link
                   className="block rounded-[8px] px-3 py-2 text-sm font-bold text-[#496779] transition-colors hover:bg-[#f0f9ff] hover:text-[#0c4a6e]"
                   href="/admin"
                 >
-                  Admin dashboard
+                  Quản trị
                 </Link>
               ) : null}
               <button
@@ -158,7 +158,7 @@ export function Navbar() {
                 onClick={handleLogout}
                 type="button"
               >
-                Logout
+                Đăng xuất
               </button>
             </div>
           </div>
@@ -168,7 +168,7 @@ export function Navbar() {
           className="inline-flex h-11 cursor-pointer items-center justify-center rounded-[8px] bg-[#f97316] px-5 text-sm font-black text-white shadow-[0_14px_32px_rgba(249,115,22,0.3)] transition-colors hover:bg-[#ea580c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0ea5e9]"
           href="/login"
         >
-          Login
+          Đăng nhập
         </Link>
       )}
     </nav>

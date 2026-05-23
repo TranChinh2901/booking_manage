@@ -21,7 +21,7 @@ export function MyBookings() {
     try {
       setBookings(await getMyBookings(accessToken));
     } catch {
-      setError("Unable to load bookings.");
+      setError("Không thể tải danh sách đặt tour.");
     } finally {
       setLoading(false);
     }
@@ -50,7 +50,7 @@ export function MyBookings() {
         current.map((booking) => (booking.id === id ? updated : booking))
       );
     } catch {
-      setError("Unable to cancel this booking.");
+      setError("Không thể hủy đơn đặt này.");
     }
   }
 
@@ -63,14 +63,14 @@ export function MyBookings() {
       await deleteMyBooking(id, token);
       setBookings((current) => current.filter((booking) => booking.id !== id));
     } catch {
-      setError("Unable to delete this booking.");
+      setError("Không thể xóa đơn đặt này.");
     }
   }
 
   if (loading) {
     return (
       <div className="mt-10 rounded-[8px] border border-[#dff3fa] bg-white p-6 text-base font-semibold text-[#496779]">
-        Loading bookings...
+        Đang tải đơn đặt tour...
       </div>
     );
   }
@@ -78,15 +78,15 @@ export function MyBookings() {
   if (!token) {
     return (
       <div className="mt-10 rounded-[8px] border border-[#fed7aa] bg-[#fff7ed] p-6">
-        <h2 className="text-2xl font-black text-[#9a3412]">Login required</h2>
+        <h2 className="text-2xl font-black text-[#9a3412]">Yêu cầu đăng nhập</h2>
         <p className="mt-3 text-base font-semibold leading-7 text-[#9a3412]">
-          Log in to view your bookings.
+          Đăng nhập để xem đơn đặt tour của bạn.
         </p>
         <Link
           className="mt-5 inline-flex h-11 items-center justify-center rounded-[8px] bg-[#f97316] px-5 text-sm font-black text-white"
           href="/login?next=/account/bookings"
         >
-          Login
+          Đăng nhập
         </Link>
       </div>
     );
@@ -95,7 +95,7 @@ export function MyBookings() {
   return (
     <div className="mt-10">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-black text-[#062f42]">Booking list</h2>
+        <h2 className="text-2xl font-black text-[#062f42]">Danh sách đặt tour</h2>
         <button
           className="inline-flex h-11 cursor-pointer items-center justify-center rounded-[8px] border border-[#d7edf4] bg-white px-5 text-sm font-black text-[#0e7490]"
           onClick={() => {
@@ -105,7 +105,7 @@ export function MyBookings() {
           }}
           type="button"
         >
-          Logout
+          Đăng xuất
         </button>
       </div>
 
@@ -117,7 +117,7 @@ export function MyBookings() {
 
       {bookings.length === 0 ? (
         <div className="mt-6 rounded-[8px] border border-[#dff3fa] bg-white p-6 text-base font-semibold text-[#496779]">
-          You do not have any bookings yet.
+          Bạn chưa có đơn đặt tour nào.
         </div>
       ) : (
         <div className="mt-6 space-y-4">
@@ -137,18 +137,18 @@ export function MyBookings() {
                       {booking.bookingCode}
                     </p>
                     <h3 className="mt-2 text-2xl font-black text-[#062f42]">
-                      {tour?.title || "Travel tour"}
+                      {tour?.title || "Tour du lịch"}
                     </h3>
                     <div className="mt-3 space-y-1 text-sm font-semibold leading-6 text-[#496779]">
                       {schedule ? (
                         <p>
-                          Schedule: {formatDate(schedule.startDate)} - {formatDate(schedule.endDate)}
+                          Lịch trình: {formatDate(schedule.startDate)} - {formatDate(schedule.endDate)}
                         </p>
                       ) : null}
                       <p>
-                        Guests: {booking.adultCount} adults, {booking.childCount} children
+                        Khách: {booking.adultCount} người lớn, {booking.childCount} trẻ em
                       </p>
-                      <p>Total: {formatCurrency(booking.totalAmount)}</p>
+                      <p>Tổng tiền: {formatCurrency(booking.totalAmount)}</p>
                     </div>
                   </div>
 
@@ -162,7 +162,7 @@ export function MyBookings() {
                         onClick={() => void handleCancel(booking.id)}
                         type="button"
                       >
-                        Cancel booking
+                        Hủy đặt tour
                       </button>
                     ) : null}
                     <button

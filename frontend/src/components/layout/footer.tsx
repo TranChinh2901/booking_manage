@@ -41,7 +41,7 @@ export function Footer() {
       </div>
 
       <div className="mx-auto mt-10 max-w-[1200px] border-t border-[#1e3a4f] pt-6 text-center text-sm font-semibold text-[#64748b]">
-        © {new Date().getFullYear()} Northline Travel. All rights reserved.
+        © {new Date().getFullYear()} Northline Travel. Tất cả quyền được bảo lưu.
       </div>
     </footer>
   );

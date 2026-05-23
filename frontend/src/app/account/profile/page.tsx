@@ -10,7 +10,7 @@ export default function AccountProfilePage() {
         <Navbar />
         <div className="mx-auto max-w-[800px] pt-14">
           <p className="text-sm font-black uppercase tracking-[0.18em] text-[#f97316]">
-            Account
+            Tài khoản
           </p>
           <h1 className="mt-3 text-4xl font-black leading-tight text-[#062f42]">
             Hồ sơ cá nhân

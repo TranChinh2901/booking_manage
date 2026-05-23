@@ -38,7 +38,7 @@ export function BookingForm({ schedule }: BookingFormProps) {
     event.preventDefault();
 
     if (!auth) {
-      setError("You need to log in before booking a tour.");
+      setError("Bạn cần đăng nhập trước khi đặt tour.");
       return;
     }
 
@@ -77,12 +77,12 @@ export function BookingForm({ schedule }: BookingFormProps) {
       if (error instanceof ApiError && error.status === 401) {
         clearAuth();
         setAuth(null);
-        setError("Your login session has expired. Please log in again.");
+        setError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
         router.refresh();
         return;
       }
 
-      setError(error instanceof ApiError ? error.message : "Unable to create booking.");
+      setError(error instanceof ApiError ? error.message : "Không thể tạo đơn đặt tour.");
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ export function BookingForm({ schedule }: BookingFormProps) {
   if (!authChecked) {
     return (
       <div className="rounded-[8px] border border-[#dff3fa] bg-white p-6 text-base font-semibold text-[#496779]">
-        Checking your login status...
+        Đang kiểm tra trạng thái đăng nhập...
       </div>
     );
   }
@@ -99,22 +99,22 @@ export function BookingForm({ schedule }: BookingFormProps) {
   if (!auth) {
     return (
       <div className="rounded-[8px] border border-[#fed7aa] bg-[#fff7ed] p-6">
-        <h2 className="text-2xl font-black text-[#9a3412]">Login required</h2>
+        <h2 className="text-2xl font-black text-[#9a3412]">Yêu cầu đăng nhập</h2>
         <p className="mt-3 text-base font-semibold leading-7 text-[#9a3412]">
-          Please log in or create an account to continue booking this tour.
+          Vui lòng đăng nhập hoặc tạo tài khoản để tiếp tục đặt tour.
         </p>
         <div className="mt-5 flex flex-col gap-3 sm:flex-row">
           <Link
             className="inline-flex h-11 items-center justify-center rounded-[8px] bg-[#f97316] px-5 text-sm font-black text-white"
             href={`/login?next=/booking/${schedule.id}`}
           >
-            Login
+            Đăng nhập
           </Link>
           <Link
             className="inline-flex h-11 items-center justify-center rounded-[8px] border border-[#f97316] px-5 text-sm font-black text-[#9a3412]"
             href={`/register?next=/booking/${schedule.id}`}
           >
-            Register
+            Đăng ký
           </Link>
         </div>
       </div>
@@ -124,15 +124,15 @@ export function BookingForm({ schedule }: BookingFormProps) {
   if (booking) {
     return (
       <div className="rounded-[8px] border border-[#bbf7d0] bg-[#f0fdf4] p-6">
-        <h2 className="text-2xl font-black text-[#166534]">Tour booked successfully</h2>
+        <h2 className="text-2xl font-black text-[#166534]">Đặt tour thành công</h2>
         <p className="mt-3 text-base font-semibold leading-7 text-[#166534]">
-          Your booking code is {booking.bookingCode}. Current status: {booking.status}.
+          Mã đặt tour của bạn là {booking.bookingCode}. Trạng thái hiện tại: {booking.status}.
         </p>
         <Link
           className="mt-5 inline-flex h-11 items-center justify-center rounded-[8px] bg-[#16a34a] px-5 text-sm font-black text-white"
           href="/account/bookings"
         >
-          View my bookings
+          Xem đơn đặt của tôi
         </Link>
       </div>
     );
@@ -143,12 +143,12 @@ export function BookingForm({ schedule }: BookingFormProps) {
       className="rounded-[8px] border border-[#dff3fa] bg-white p-6 shadow-[0_24px_70px_rgba(12,74,110,0.12)]"
       onSubmit={handleSubmit}
     >
-      <h2 className="text-2xl font-black text-[#062f42]">Booking information</h2>
+      <h2 className="text-2xl font-black text-[#062f42]">Thông tin đặt tour</h2>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-            Adults
+            Người lớn
           </span>
           <input
             className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none focus:border-[#0ea5e9]"
@@ -161,7 +161,7 @@ export function BookingForm({ schedule }: BookingFormProps) {
         </label>
         <label className="block">
           <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-            Children
+            Trẻ em
           </span>
           <input
             className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none focus:border-[#0ea5e9]"
@@ -178,14 +178,14 @@ export function BookingForm({ schedule }: BookingFormProps) {
           {formatDate(schedule.startDate)} - {formatDate(schedule.endDate)}
         </p>
         <p className="mt-2 text-2xl font-black text-[#f97316]">
-          Estimated total: {formatCurrency(totalAmount)}
+          Tổng dự kiến: {formatCurrency(totalAmount)}
         </p>
       </div>
 
       <div className="mt-5 space-y-4">
         <label className="block">
           <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-            Contact name
+            Họ và tên liên hệ
           </span>
           <input
             className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none focus:border-[#0ea5e9]"
@@ -209,7 +209,7 @@ export function BookingForm({ schedule }: BookingFormProps) {
         </label>
         <label className="block">
           <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-            Phone number
+            Số điện thoại
           </span>
           <input
             className="h-12 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 text-sm font-semibold text-[#0c3144] outline-none focus:border-[#0ea5e9]"
@@ -221,7 +221,7 @@ export function BookingForm({ schedule }: BookingFormProps) {
         </label>
         <label className="block">
           <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-[#64748b]">
-            Note
+            Ghi chú
           </span>
           <textarea
             className="min-h-28 w-full rounded-[8px] border border-[#d7edf4] bg-[#f8fdff] px-4 py-3 text-sm font-semibold text-[#0c3144] outline-none focus:border-[#0ea5e9]"
@@ -257,7 +257,7 @@ export function BookingForm({ schedule }: BookingFormProps) {
         disabled={loading}
         type="submit"
       >
-        {loading ? "Booking..." : "Confirm booking"}
+        {loading ? "Đang đặt..." : "Xác nhận đặt tour"}
       </button>
     </form>
   );
