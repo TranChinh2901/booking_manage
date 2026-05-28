@@ -5,6 +5,7 @@ import authRouter from "@/routes/auth";
 import bookingRouter from "@/routes/booking";
 import bookingTravelerRouter from "@/routes/booking-traveler";
 import categoryRouter from "@/routes/category";
+import chatbotRouter from "@/routes/chatbot";
 import contactRequestRouter from "@/routes/contact-request";
 import destinationRouter from "@/routes/destination";
 import favoriteRouter from "@/routes/favorite";
@@ -20,6 +21,7 @@ const router = express.Router();
 const API_V1 = "/api/v1";
 
 router.use(`${API_V1}/auth`, authRouter);
+router.use(`${API_V1}/chatbot`, chatbotRouter);
 router.use(`${API_V1}/users`, userRouter);
 router.use(`${API_V1}/destinations`, destinationRouter);
 router.use(`${API_V1}/categories`, categoryRouter);

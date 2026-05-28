@@ -38,4 +38,9 @@ export const loadedEnv = {
     pass: process.env.MAIL_PASS || "",
     from: process.env.MAIL_FROM || "Travel Booking <noreply@travelbooking.com>",
   },
+  gemini: {
+    apiKey: process.env.GEMINI_API_KEY || "",
+    model: process.env.GEMINI_MODEL || "gemini-2.0-flash",
+    baseUrl: process.env.GEMINI_BASE_URL,
+  },
 };
