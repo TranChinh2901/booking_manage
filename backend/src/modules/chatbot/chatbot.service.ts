@@ -7,13 +7,37 @@ import { Destination, DestinationStatus } from "@/modules/destinations/entities/
 import { Tour, TourStatus } from "@/modules/tours/entities/tour.entity";
 import { TourSchedule, TourScheduleStatus } from "@/modules/tour-schedules/entities/tour-schedule.entity";
 
+// --- CONFIG ---
+const MAX_HISTORY_MESSAGES = 10; // Tối đa 10 cặp message (user+model) giữ lại
+const MAX_FUNCTION_ROUNDS = 4;
+const TEMPERATURE = 0.7;
+const TOP_P = 0.9;
 
-const SYSTEM_PROMPT = `Bạn là trợ lý du lịch AI của Travel Booking, một nền tảng đặt tour du lịch trực tuyến.
-Nhiệm vụ: trả lời ngắn gọn, hữu ích, thân thiện bằng tiếng Việt.
-Hỗ trợ: tìm kiếm tour, tư vấn điểm đến, xem lịch khởi hành, giá tour, thông tin đặt tour.
-Không bịa thông tin giá, lịch trình, chỗ trống mà hệ thống chưa cung cấp.
-Khi cần dữ liệu thật về tour, điểm đến, lịch khởi hành, hãy gọi function tương ứng trước khi trả lời.
-Khi trả về danh sách tour, hãy format đẹp với tên, giá, thời gian, điểm đến.`;
+const SYSTEM_PROMPT = `Bạn là "Travel AI" — trợ lý du lịch thông minh của nền tảng Travel Booking.
+
+## Vai trò
+- Tư vấn viên du lịch chuyên nghiệp, thân thiện, nhiệt tình
+- Hỗ trợ khách hàng tìm tour phù hợp, tra cứu lịch khởi hành, giá cả
+
+## Nguyên tắc trả lời
+- Luôn trả lời bằng tiếng Việt, ngắn gọn, dễ hiểu
+- Dùng emoji phù hợp để tạo cảm giác thân thiện (không lạm dụng)
+- Format danh sách tour rõ ràng: tên, giá, thời gian, điểm đến
+- KHÔNG bịa thông tin về giá, lịch trình, chỗ trống — phải gọi function để lấy dữ liệu thật
+- Nếu không tìm thấy kết quả, gợi ý khách thử từ khóa khác hoặc hỏi thêm
+- Khi khách hỏi ngoài phạm vi du lịch/đặt tour, lịch sự từ chối và hướng về chủ đề chính
+
+## Khả năng
+- Tìm kiếm tour theo tên, điểm đến, khoảng giá
+- Xem chi tiết tour (mô tả, giá, thời gian, phương tiện)
+- Tra lịch khởi hành còn chỗ
+- Liệt kê điểm đến du lịch
+- Tư vấn tour phù hợp theo nhu cầu khách (ngân sách, thời gian, sở thích)
+
+## Format trả lời
+- Dùng **in đậm** cho tên tour, giá tiền
+- Dùng bullet points cho danh sách
+- Giá tiền format: xxx.xxx ₫`;
 
 const functionDeclarations: FunctionDeclaration[] = [
   {
@@ -158,18 +182,39 @@ async function executeFunctionCall(name: string, args: Record<string, any>) {
   }
 }
 
-const MAX_ROUNDS = 4;
+/**
+ * Sanitize và giới hạn history từ client.
+ * Chỉ giữ lại MAX_HISTORY_MESSAGES * 2 entries gần nhất (mỗi cặp user+model = 2).
+ */
+function sanitizeHistory(history: any[]): any[] {
+  if (!Array.isArray(history)) return [];
+
+  const maxEntries = MAX_HISTORY_MESSAGES * 2;
+  const sliced = history.slice(-maxEntries);
+
+  return sliced.filter(
+    (entry) =>
+      entry &&
+      typeof entry === "object" &&
+      ["user", "model"].includes(entry.role) &&
+      Array.isArray(entry.parts) &&
+      entry.parts.length > 0
+  );
+}
 
 export async function generateChatReply(message: string, history: any[]) {
-  let contents = [...history, { role: "user", parts: [{ text: message }] }];
+  const safeHistory = sanitizeHistory(history);
+  let contents = [...safeHistory, { role: "user", parts: [{ text: message }] }];
   let tours: any[] = [];
 
-  for (let round = 0; round < MAX_ROUNDS; round++) {
+  for (let round = 0; round < MAX_FUNCTION_ROUNDS; round++) {
     const response = await geminiClient.models.generateContent({
       model: geminiModel,
       contents,
       config: {
         systemInstruction: SYSTEM_PROMPT,
+        temperature: TEMPERATURE,
+        topP: TOP_P,
         tools: [{ functionDeclarations }],
       },
     });
@@ -182,7 +227,6 @@ export async function generateChatReply(message: string, history: any[]) {
     const functionResponses = await Promise.all(
       functionCalls.map(async (fc) => {
         const result = await executeFunctionCall(fc.name!, fc.args ?? {});
-        // Collect tours data for frontend cards
         if (fc.name === "search_tours" && result.tours) {
           tours = result.tours;
         } else if (fc.name === "get_tour_details" && result.tour) {
@@ -199,5 +243,5 @@ export async function generateChatReply(message: string, history: any[]) {
     ];
   }
 
-  return { reply: "Xin lỗi, tôi không thể xử lý yêu cầu này lúc này.", tours: tours.length ? tours : undefined };
+  return { reply: "Xin lỗi, tôi không thể xử lý yêu cầu này lúc này. Vui lòng thử lại.", tours: tours.length ? tours : undefined };
 }

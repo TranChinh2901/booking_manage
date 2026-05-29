@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api/v1").replace(/\/$/, "");
+const HISTORY_LIMIT = 8; // Chỉ gửi tối đa 8 tin nhắn gần nhất lên server
 
 interface TourCard {
   id: number;
@@ -24,6 +25,41 @@ interface Message {
 
 function formatPrice(price: string | number) {
   return Number(price).toLocaleString("vi-VN") + " ₫";
+}
+
+/** Simple markdown renderer cho chatbot - hỗ trợ bold, italic, bullet list */
+function ChatMarkdown({ text }: { text: string }) {
+  const lines = text.split("\n");
+
+  return (
+    <div className="space-y-1">
+      {lines.map((line, i) => {
+        const trimmed = line.trim();
+        // Bullet list
+        if (/^[-•*]\s/.test(trimmed)) {
+          const content = trimmed.replace(/^[-•*]\s/, "");
+          return (
+            <div key={i} className="flex gap-1.5 ml-1">
+              <span className="text-[#0ea5e9] shrink-0">•</span>
+              <span dangerouslySetInnerHTML={{ __html: inlineFormat(content) }} />
+            </div>
+          );
+        }
+        // Empty line
+        if (!trimmed) return <div key={i} className="h-1" />;
+        // Normal paragraph
+        return <p key={i} dangerouslySetInnerHTML={{ __html: inlineFormat(line) }} />;
+      })}
+    </div>
+  );
+}
+
+/** Format inline markdown: **bold**, *italic*, `code` */
+function inlineFormat(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code class="bg-[#e0f2fe] px-1 rounded text-[#0c4a6e] text-xs">$1</code>');
 }
 
 function TourCardItem({ tour }: { tour: TourCard }) {
@@ -48,9 +84,14 @@ function TourCardItem({ tour }: { tour: TourCard }) {
   );
 }
 
+const GREETING: Message = {
+  role: "assistant",
+  content: "Xin chào! 👋 Tôi là trợ lý du lịch AI của Travel Booking.\n\nTôi có thể giúp bạn:\n- Tìm kiếm tour du lịch theo điểm đến, giá cả\n- Xem chi tiết và lịch khởi hành tour\n- Tư vấn tour phù hợp với nhu cầu của bạn\n\nBạn muốn tìm tour ở đâu?",
+};
+
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([GREETING]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -68,7 +109,9 @@ export function ChatWidget() {
     setLoading(true);
 
     try {
-      const history = messages.map((m) => ({
+      // Chỉ gửi HISTORY_LIMIT tin nhắn gần nhất (không tính greeting)
+      const recentMessages = messages.filter((m) => m !== GREETING).slice(-HISTORY_LIMIT);
+      const history = recentMessages.map((m) => ({
         role: m.role === "user" ? "user" : "model",
         parts: [{ text: m.content }],
       }));
@@ -86,7 +129,7 @@ export function ChatWidget() {
         tours: data.tours,
       }]);
     } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Không thể kết nối đến server." }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "Không thể kết nối đến server. Vui lòng thử lại." }]);
     } finally {
       setLoading(false);
     }
@@ -116,7 +159,10 @@ export function ChatWidget() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <span className="font-bold text-sm">Trợ lý Du lịch AI</span>
+          <div>
+            <span className="font-bold text-sm block leading-tight">Trợ lý Du lịch AI</span>
+            <span className="text-[10px] text-white/70">Luôn sẵn sàng hỗ trợ</span>
+          </div>
         </div>
         <button onClick={() => setOpen(false)} className="hover:bg-white/20 rounded-lg p-1 transition-colors" aria-label="Đóng">
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -127,23 +173,17 @@ export function ChatWidget() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.length === 0 && (
-          <div className="text-center text-[#496779] text-sm mt-8">
-            <p>👋 Xin chào! Tôi là trợ lý du lịch AI.</p>
-            <p className="mt-1">Hỏi tôi về tour, điểm đến, lịch khởi hành...</p>
-          </div>
-        )}
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div className={`max-w-[85%] ${msg.role === "user" ? "" : "w-full"}`}>
               <div
-                className={`px-3 py-2 rounded-2xl text-sm whitespace-pre-wrap ${
+                className={`px-3 py-2 rounded-2xl text-sm ${
                   msg.role === "user"
                     ? "bg-[#0ea5e9] text-white rounded-br-md shadow-[0_4px_12px_rgba(14,165,233,0.25)]"
                     : "bg-white text-[#073449] rounded-bl-md border border-[#dff3fa] shadow-sm"
                 }`}
               >
-                {msg.content}
+                {msg.role === "assistant" ? <ChatMarkdown text={msg.content} /> : msg.content}
               </div>
               {msg.tours && msg.tours.length > 0 && (
                 <div className="mt-2 space-y-2">
